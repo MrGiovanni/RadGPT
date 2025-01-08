@@ -17,10 +17,10 @@ Model and dataset to be released here very soon, stay tuned!
 
 ## Paper
 
-<b>RadGPT: Creating Lesion Image-Text Pair Datasets of 3D Abdominal Computed Tomography</b> <br/>
+<b>RadGPT: Constructing 3D Image-Text Tumor Datasets</b> <br/>
 [Pedro R. A. S. Bassi](https://scholar.google.com/citations?user=NftgL6gAAAAJ&hl=en), Mehmet Yavuz, Kang Wang, Xiaoxi Chen, [Wenxuan Li](https://scholar.google.com/citations?hl=en&user=tpNZM2YAAAAJ), Sergio Decherchi, Andrea Cavalli, [Yang Yang](https://scholar.google.com/citations?hl=en&user=6XsJUBIAAAAJ), [Alan Yuille](https://www.cs.jhu.edu/~ayuille/), [Zongwei Zhou](https://www.zongweiz.com/)* <br/>
 Johns Hopkins University <br/>
-<a href='https://www.zongweiz.com/dataset'><img src='https://img.shields.io/badge/Project-Page-Green'></a> <a href='https://www.cs.jhu.edu/~zongwei/publication/bassi2025radgpt.pdf'><img src='https://img.shields.io/badge/Paper-PDF-purple'></a>
+<a href='https://www.zongweiz.com/dataset'><img src='https://img.shields.io/badge/Project-Page-Green'></a> <a href='https://www.cs.jhu.edu/~zongwei/publication/bassi2025radgpt.pdf'><img src='https://img.shields.io/badge/Paper-PDF-purple'></a> <a href='document/bassi2024rsna_radgpt.pdf'><img src='https://img.shields.io/badge/Slides-RSNA-orange'></a>
 
 ## Acknowledgement
 
