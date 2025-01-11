@@ -1,8 +1,15 @@
 <h1 align="center">RadGPT & AbdomenAtlas 3.0</h1>
-<p align="center">
-    <a href="https://github.com/MrGiovanni/RadGPT"><img src="https://img.shields.io/github/stars/MrGiovanni/RadGPT?style=social" /></a>
-    <a href="https://twitter.com/bodymaps317"><img src="https://img.shields.io/twitter/follow/BodyMaps" alt="Follow on Twitter" /></a>
-</p>
+
+<div align="center">
+
+![visitors](https://visitor-badge.laobi.icu/badge?page_id=MrGiovanni/RadGPT)
+[![GitHub Repo stars](https://img.shields.io/github/stars/MrGiovanni/RadGPT?style=social)](https://github.com/MrGiovanni/SuPreM/stargazers)
+<a href="https://twitter.com/bodymaps317">
+        <img src="https://img.shields.io/twitter/follow/BodyMaps?style=social" alt="Follow on Twitter" />
+</a><br/>
+**Subscribe us: https://groups.google.com/u/2/g/bodymaps**  
+
+</div>
 
 <div align="center">
  
