@@ -3,7 +3,7 @@
 <div align="center">
 
 ![visitors](https://visitor-badge.laobi.icu/badge?page_id=MrGiovanni/RadGPT)
-[![GitHub Repo stars](https://img.shields.io/github/stars/MrGiovanni/RadGPT?style=social)](https://github.com/MrGiovanni/SuPreM/stargazers)
+[![GitHub Repo stars](https://img.shields.io/github/stars/MrGiovanni/RadGPT?style=social)](https://github.com/MrGiovanni/RadGPT/stargazers)
 <a href="https://twitter.com/bodymaps317">
         <img src="https://img.shields.io/twitter/follow/BodyMaps?style=social" alt="Follow on Twitter" />
 </a><br/>
