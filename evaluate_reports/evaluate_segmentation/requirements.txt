@@ -1,0 +1,10 @@
+pandas
+nibabel
+matplotlib
+opencv-python
+scipy
+openai
+scikit-learn
+scikit-image==0.24.0
+openpyxl
+simpleitk

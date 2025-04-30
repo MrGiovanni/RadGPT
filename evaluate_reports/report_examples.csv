@@ -1,0 +1,82 @@
+Encrypted Accession Number,Encrypted Patient MRN,Modality,Exam Description,Organization,Exam Completed Date,Patient Age,Patient Sex,Patient Status,Findings,id
+1,a,CT,CT ABDOMEN/PELVIS WITHOUT CONTRAST,a,6/30/15 0:00,50,Female,Inpatient,"Evaluation of the solid organs and vascular structures is limited without intravenous contrast.
+Visualized lung bases:  New small bilateral pleural effusion with basilar atelectasis.
+Liver:  Unremarkable
+Gallbladder: Gallbladder is distended measuring up to 4.7 cm in maximal diameter, not significantly changed compared to prior study. Cholelithiasis noted.
+Spleen:  Unremarkable
+Pancreas:  Native pancreas is atrophic. A right lower quadrant pancreas allograft is noted without gross abnormality. 
+Adrenal Glands:  Unremarkable
+Kidneys:  Native kidneys are not visualized, there is a left lower quadrant renal allograft with mild prominence of the calyces but no frank hydronephrosis.
+GI Tract:  No small bowel obstruction. Possible wall thickening of the rectosigmoid colon though may be accentuated by underdistention. Moderate amount of fluid in the colon noted.
+Vasculature:  Diffuse atherosclerotic disease of the abdominal aorta and branch vessels, more advanced than expected for age.
+Lymphadenopathy: Absent
+Peritoneum: Small amount of perihepatic ascites, which is new.
+Bladder: Unremarkable
+Reproductive organs: Unremarkable
+Bones:  No suspicious lesions. The laminectomy changes of the lumbar spine noted.
+Extraperitoneal soft tissues: Mild anasarca.
+Lines/drains/medical devices: Foley in place.",0
+2,b,CT,CT ABDOMEN/PELVIS WITH CONTRAST,b,6/30/17 0:00,39,Female,Emergency,"Evaluation of visible lung bases: No abnormalities identified.
+
+Liver: No abnormal findings.
+
+Gallbladder: No abnormal findings.
+
+Spleen: No abnormal findings.
+
+Pancreas: No abnormal findings.
+
+Adrenal Glands: No abnormal findings.
+
+Kidneys: 
+The left kidney shows several sizable calculi within its collecting system, the largest stone measuring approximately 1.7 cm and situated at the junction between the ureter and renal pelvis. Moderate dilation of the renal pelvis and calyces, delayed renal enhancement, and inflammatory changes in surrounding fat tissue suggest moderate obstruction. Small gas bubbles appear to be present within the left renal calyces (series 3, image 86), raising concern for possible emphysematous pyelitis, likely secondary to the obstruction.
+
+Right kidney and urinary bladder: No abnormal findings.
+
+Gastrointestinal Tract: No abnormal findings.
+
+Vascular structures: No abnormal findings.
+
+Lymph Nodes: No enlarged nodes observed.
+
+Peritoneum: No fluid accumulation.
+
+Skeletal system: No concerning bone abnormalities detected.
+
+Extraperitoneal soft tissues: No abnormal findings.
+
+Medical devices or lines: None present.
+",1
+3,c,CT,CT ABDOMEN/PELVIS WITHOUT CONTRAST,c,6/30/18 0:00,80,Female,Emergency,"Assessment of abdominal organs and vascular structures is restricted due to lack of intravenous contrast administration.
+
+Lung bases: Minimal fluid accumulations observed bilaterally with associated basilar atelectasis. Possible thickening of the left pleura noted, and a dedicated chest CT could be beneficial for further assessment if clinically indicated.
+
+Liver: Presence of minor pneumobilia likely related to previous sphincterotomy; otherwise normal.
+
+Gallbladder: Surgically removed.
+
+Spleen: No abnormalities observed.
+
+Pancreas: No abnormalities observed.
+
+Adrenal Glands: No abnormalities observed.
+
+Kidneys: Presence of cysts noted bilaterally without suspicious lesions.
+
+Gastrointestinal Tract: No abnormalities observed.
+
+Vascular system: Significant calcifications identified throughout the vascular structures.
+
+Lymph Nodes: No evidence of lymph node enlargement.
+
+Peritoneal cavity: No fluid accumulation present.
+
+Bladder: No abnormalities observed.
+
+Reproductive organs: A sizable calcified mass in the right pelvic region consistent with an exophytic fibroid.
+
+Bones: Presence of an intramedullary rod in the left hip and evidence of a previous fracture of the left inferior pubic ramus noted. No acute fracture of the hip identified.
+
+Extraperitoneal soft tissues: No abnormalities observed.
+
+Medical devices or drains: None.",2

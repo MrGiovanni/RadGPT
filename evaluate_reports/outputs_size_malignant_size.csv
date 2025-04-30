@@ -1,0 +1,10 @@
+Anon Acc #,Liver Tumor,Kidney Tumor,Pancreas Tumor,DNN answer,Malignant Tumor in liver,Malignant Tumor in kidney,Malignant Tumor in pancreas,DNN answer malignancy liver,DNN answer malignancy kidney,DNN answer malignancy pancreas,Size (mm) of Largest Malignant Tumor in liver,Size (mm) of Largest Malignant Tumor in kidney,Size (mm) of Largest Malignant Tumor in pancreas,DNN answer size liver,DNN answer size kidney,DNN answer size pancreas
+1,0,0,1,#removed,-,-,1,#removed,#removed,#removed,-,-,29,#removed,#removed,#removed
+2,0,1,0,#removed,-,1,-,#removed,#removed,#removed,-,72,-,#removed,#removed,#removed
+3,1,0,0,#removed,1,-,-,#removed,#removed,#removed,21,-,-,#removed,#removed,#removed
+4,nan,0,1,#removed,-,-,1,#removed,#removed,#removed,-,-,68,#removed,#removed,#removed
+5,1,0,1,#removed,1,-,1,#removed,#removed,#removed,nan,-,nan,#removed,#removed,#removed
+6,1,0,0,#removed,nan,-,-,#removed,#removed,#removed,-,-,-,#removed,#removed,#removed
+7,1,nan,nan,#removed,1,-,-,#removed,#removed,#removed,50,-,-,#removed,#removed,#removed
+8,0,1,0,#removed,-,nan,-,#removed,#removed,#removed,-,-,-,#removed,#removed,#removed
+9,nan,0,1,#removed,-,-,1,#removed,#removed,#removed,-,-,15,#removed,#removed,#removed
