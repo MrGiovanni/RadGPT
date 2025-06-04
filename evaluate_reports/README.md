@@ -45,7 +45,7 @@ About 70GB of VRAM should be enough for this model. Select the number of GPUs be
 export NCCL_P2P_DISABLE=1
 conda activate vllm
 cd ..
-TRANSFORMERS_CACHE=./HFCache HF_HOME=./HFCache CUDA_VISIBLE_DEVICES=0,1,2,3 vllm serve "hugging-quants/Meta-Llama-3.1-70B-Instruct-AWQ-INT4" --dtype=half --tensor-parallel-size 4 --gpu_memory_utilization 0.9 --port 8000 --max_model_len 120000 --enforce-eager > API.log 2>&1 &
+TRANSFORMERS_CACHE=./HFCache HF_HOME=./HFCache CUDA_VISIBLE_DEVICES=0,1,2,3 vllm serve "hugging-quants/Meta-Llama-3.1-70B-Instruct-AWQ-INT4" --dtype=half --tensor-parallel-size 4 --gpu_memory_utilization 0.9 --port 8000 --max_model_len 80000 --enforce-eager > API.log 2>&1 &
 # Check if the API is up
 while ! curl -s http://localhost:8000/v1/models; do
     echo "Waiting for API to be ready..."
