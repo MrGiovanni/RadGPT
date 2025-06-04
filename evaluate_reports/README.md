@@ -43,6 +43,7 @@ Organize the data in a CSV, like in the example combined_data.csv, using the sam
 About 70GB of VRAM should be enough for this model. Select the number of GPUs below according to this requirement (e.g., we used 4 x 24GB GPUs below). To modify number of GPUs, change CUDA_VISIBLE_DEVICES and tensor-parallel-size, number must be powers of 2 (1,2,4,8,...)
 ```bash
 export NCCL_P2P_DISABLE=1
+conda activate vllm
 cd ..
 TRANSFORMERS_CACHE=./HFCache HF_HOME=./HFCache CUDA_VISIBLE_DEVICES=0,1,2,3 vllm serve "hugging-quants/Meta-Llama-3.1-70B-Instruct-AWQ-INT4" --dtype=half --tensor-parallel-size 4 --gpu_memory_utilization 0.9 --port 8000 --max_model_len 120000 --enforce-eager > API.log 2>&1 &
 # Check if the API is up
