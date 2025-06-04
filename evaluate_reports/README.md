@@ -18,7 +18,7 @@ source ~/.bashrc
 </details>
 
 ```bash
-git clone https://github.com/PedroRASB/RadGPT
+git clone https://github.com/MrGiovanni/RadGPT
 cd RadGPT/LabelerLLM
 conda create -n vllm python=3.12 -y
 conda activate vllm
