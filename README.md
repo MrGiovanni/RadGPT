@@ -28,6 +28,7 @@ Our “superhuman” reports are more accurate, detailed, standardized, and gene
 <b>RadGPT: Constructing 3D Image-Text Tumor Datasets</b> <br/>
 [Pedro R. A. S. Bassi](https://scholar.google.com/citations?user=NftgL6gAAAAJ&hl=en), Mehmet Yavuz, Kang Wang, Sezgin Er, Ibrahim E. Hamamci, [Wenxuan Li](https://scholar.google.com/citations?hl=en&user=tpNZM2YAAAAJ), Xiaoxi Chen, Sergio Decherchi, Andrea Cavalli, [Yang Yang](https://scholar.google.com/citations?hl=en&user=6XsJUBIAAAAJ), [Alan Yuille](https://www.cs.jhu.edu/~ayuille/), [Zongwei Zhou](https://www.zongweiz.com/)* <br/>
 *Johns Hopkins University* <br/>
+ICCV, 2025 <br/>
 <a href='https://www.zongweiz.com/dataset'><img src='https://img.shields.io/badge/Project-Page-Green'></a> <a href='https://www.cs.jhu.edu/~zongwei/publication/bassi2025radgpt.pdf'><img src='https://img.shields.io/badge/Paper-PDF-purple'></a> <a href='document/bassi2024rsna_radgpt.pdf'><img src='https://img.shields.io/badge/Slides-RSNA-orange'></a> [![YouTube](https://badges.aleen42.com/src/youtube.svg)](https://youtu.be/WxgyHNi2tLc)
 
 ## Installation
