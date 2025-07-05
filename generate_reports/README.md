@@ -9,10 +9,10 @@ Assemble the dataset in this format:
 <div style="margin-left: 25px;">
 
 ```
-AbdomenAtlas
+/path/to/dataset/
 ├── BDMAP_A0000001
 |    ├── ct.nii.gz
-│    └── predictions
+│    └── segmentations
 │          ├── liver_tumor.nii.gz
 │          ├── kidney_tumor.nii.gz
 │          ├── pancreas_tumor.nii.gz
@@ -25,7 +25,7 @@ AbdomenAtlas
 │          └──...
 ├── BDMAP_A0000002
 |    ├── ct.nii.gz
-│    └── predictions
+│    └── segmentations
 │          ├── liver_tumor.nii.gz
 │          ├── kidney_tumor.nii.gz
 │          ├── pancreas_tumor.nii.gz
@@ -47,7 +47,7 @@ Place the folder AbdomenAtlas inside this folder (RadGPTReportGeneration). You m
 RadGPT uses deterministic algorithms to extract information from CTs and segmentation masks (tumor size, attenuation, location, interaction with blood vessels and organs, organ size, steatosis,...), and create structured radiology reports.
 
 ```bash
-python3 CreateAAReports.py --th 10 --csv_file /path/to/output/file.csv --num_workers 10 --dataset AA
+python3 CreateAAReports.py --th 10 --csv_file /path/to/output/file.csv --num_workers 10 --dataset custom --ct_folder /path/to/dataset/ --mask_folder /path/to/dataset/
 ```
 
 ## Generate narrative reports (style adaptation w/ LLM)
