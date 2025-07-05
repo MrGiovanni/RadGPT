@@ -108,6 +108,6 @@ pkill -f "vllm serve"
 
 The command below extracts metadata (e.g., tumor size and location) from the reports, creating a large metadata table that can be easily read with code.
 
-```python
+```bash
 python ExtractComprehensiveMedatadaReports.py --reports /path/to/structured_reports.csv --output reports_and_metadata.csv
 ```
