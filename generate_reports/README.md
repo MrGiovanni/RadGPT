@@ -103,3 +103,11 @@ python3 fuse.py --port 8000 --reports /path/to/narrative/reports.csv --radiology
 ```bash
 pkill -f "vllm serve"
 ```
+
+## (Optional) Extarct metadata from reports
+
+The command below extracts metadata (e.g., tumor size and location) from the reports, creating a large metadata table that can be easily read with code.
+
+```python
+python ExtractComprehensiveMedatadaReports.py --reports /path/to/structured_reports.csv --output reports_and_metadata.csv
+```
