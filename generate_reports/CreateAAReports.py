@@ -1,3 +1,4 @@
+#python3 CreateAAReports.py --csv_file /ccvl/net/ccvl15/pedro/AtlasV2.csv --num_workers 10 --dataset AA
 import SimpleITK as sitk
 import matplotlib.pyplot as plt
 import numpy as np
@@ -961,7 +962,7 @@ def get_paths(folder,anno_folder,item,clss):
         if os.path.isfile(os.path.join(anno_folder,item,'segmentations/spleen.nii.gz')):
             organ=os.path.join(anno_folder,item,'segmentations/spleen.nii.gz')
         else:
-            organ=os.path.join(anno_folder,item,'segmentations/__spleen.nii.gz')
+            organ=os.path.join(anno_folder,item,'segmentations/_spleen.nii.gz')
 
         organ=load_canonical(organ).get_fdata().astype('uint8')
         ct=os.path.join(folder,item,'ct.nii.gz')
@@ -1350,8 +1351,33 @@ def organ_text(healthy,tumors,ct,organ,spacing,clss,skip_incomplete,item,organ_r
         organ_hu,organ_hu_std=measure_organ_hu(organ,0*organ,ct)
 
     if clss=='liver':
-        segments=load_segments_liver(anno_folder+f'/{item}/segmentations/',spacing)
+        #folder_elements = list(pathlib.Path(folder).parts)
+        #print('Folder elements:', folder_elements)
+        #seg_pth='/mnt/ccvl15/pedro/LiverSubSegments/AbdomenAtlasInternalno_overlay_liver_FTResults/'
+        #if not os.path.exists(seg_pth):
+        #    seg_pth = '/ccvl/net/ccvl15/pedro/LiverSubSegments/AbdomenAtlasInternalno_overlay_liver_FTResults/'
+        #seg_pth=os.path.join(seg_pth,item,'segmentations')
+        #if not os.path.exists(seg_pth):
+        #    segments=None
+        #else:
+        try:
+            segments=load_segments_liver(anno_folder+f'/{item}/segmentations/',spacing)
+        except:
+            segments=None
     elif clss=='pancreas':
+        #check if segments exist:
+        #try:
+        #    if os.path.isfile(f'/mnt/T8/AbdomenAtlasPre/{item}/segmentations/pancreas_head.nii.gz'):
+        #        segments=load_segments_pancreas(f'/mnt/T8/AbdomenAtlasPre/{item}/segmentations/',spacing)
+        #    elif os.path.isfile(f'/ccvl/net/ccvl15/pedro/PancreasSegmentsAtlas/{item}/segmentations/pancreas_head.nii.gz'):
+        #        segments=load_segments_pancreas(f'/ccvl/net/ccvl15/pedro/PancreasSegmentsAtlas/{item}/segmentations/',spacing)
+        #    elif os.path.isfile(f'/mnt/ccvl15/pedro/PancreasSegmentsAtlas/{item}/segmentations/pancreas_head.nii.gz'):
+        #        segments=load_segments_pancreas(f'/mnt/ccvl15/pedro/PancreasSegmentsAtlas/{item}/segmentations/',spacing)
+        #    else:
+        #        #raise ValueError('No segments found')
+        #        segments=None
+        #except:
+        #    segments=None
         try:
             segments=load_segments_pancreas(anno_folder+f'/{item}/segmentations/',spacing)
         except:
@@ -1759,11 +1785,14 @@ def process_item(case, csv_file, folder, names, anno_folder, skip_incomplete, pl
                 phase=None
 
     if phase is None:
-        #get only cases where 'MSD' or 'Decathlon' is in original_id (getting from FLARE) or original_dataset (getting from FLARE)
-        mapping=pd.read_csv('AbdomenAtlas1.0_id_mapping.csv')
-        msd=mapping[(mapping['original_id (getting from FLARE)'].str.contains('MSD')) | (mapping['original_id (getting from FLARE)'].str.contains('Decathlon')) | (mapping['original_dataset (getting from FLARE)'].str.contains('MSD')) | (mapping['original_dataset (getting from FLARE)'].str.contains('Decathlon'))]['AbdomenAtlas_id'].to_list()
-        if case in msd:
-            phase='Venous'
+        try:
+            #get only cases where 'MSD' or 'Decathlon' is in original_id (getting from FLARE) or original_dataset (getting from FLARE)
+            mapping=pd.read_csv('AbdomenAtlas1.0_id_mapping.csv')
+            msd=mapping[(mapping['original_id (getting from FLARE)'].str.contains('MSD')) | (mapping['original_id (getting from FLARE)'].str.contains('Decathlon')) | (mapping['original_dataset (getting from FLARE)'].str.contains('MSD')) | (mapping['original_dataset (getting from FLARE)'].str.contains('Decathlon'))]['AbdomenAtlas_id'].to_list()
+            if case in msd:
+                phase='Venous'
+        except:
+            pass
 
     report = real_multi_organ_report(folder, names, anno_folder, case, skip_incomplete, plot, N,phase=phase,th=th)
     if report is not None:
@@ -1801,20 +1830,61 @@ def AbdomenAtlasReport(plot=False,restart_csv=False,skip_incomplete=True,csv_fil
     Generates a report for AbdomenAtlas data.
     """
     
-    folder='./AbdomenAtlas/'
+    folder='/mnt/T9/AbdomenAtlasPro/'
     global anno_folder
-    anno_folder='./AbdomenAtlas/'
+    anno_folder='/mnt/T8/AbdomenAtlasPre/'
 
     if dataset=='AAMini':
-        folder='./AbdomenAtlasMini/'
-        anno_folder='./AbdomenAtlasMini/'
+        folder='/mnt/realccvl15/zzhou82/data/AbdomenAtlas/image_only/AbdomenAtlas1.1Mini/AbdomenAtlas1.1Mini/'
+        anno_folder='/mnt/realccvl15/zzhou82/data/AbdomenAtlas/mask_only/AbdomenAtlas3.0Mini/AbdomenAtlas3.0Mini/'
 
     if dataset=='AA' or dataset=='AAMini':
-        ids=sorted([x for x in os.listdir(folder) if os.path.isdir(os.path.join(folder,x))])
+        try:
+            ids=sorted([x for x in os.listdir('/mnt/ccvl15/zzhou82/data/AbdomenAtlas/image_mask/AbdomenAtlas1.1Mini/AbdomenAtlas1.1Mini/')\
+            if os.path.isdir(os.path.join(folder,x))])
+        except:
+            ids=sorted([x for x in os.listdir('/ccvl/net/ccvl15/zzhou82/data/AbdomenAtlas/image_mask/AbdomenAtlas1.1Mini/AbdomenAtlas1.1Mini/')\
+            if os.path.isdir(os.path.join(folder,x))])
+        if args.pancreas_only:
+            # Load the list from the file
+            with open('/ccvl/net/ccvl15/pedro/pancreatic_cases.txt', 'r') as f:
+                p_loaded = [line.strip() for line in f]
+            ids = [x for x in ids if x in p_loaded]
+        if args.colon_only:
+            ids=[x for x in ids if os.path.isfile(os.path.join(anno_folder,x,'segmentations','colon_lesion.nii.gz'))]
+    elif dataset == 'JHH_test':
+        ids = pd.read_csv('JHH_testset_tumor_analysis.csv').drop_duplicates(subset=['case_name'])['case_name'].tolist()
+    elif dataset == 'JHH_test_model':
+        anno_folder='/mnt/ccvl15/yucheng/KidneyDiff/3D-TransUNet/outv2/Dataset1012-WX_FELIX_TumorOrgan/1013'
+        #check if exixsts
+        if not os.path.exists(anno_folder):
+            anno_folder='/ccvl/net/ccvl15/yucheng/KidneyDiff/3D-TransUNet/outv2/Dataset1012-WX_FELIX_TumorOrgan/1013'
+        ids = [item[:-len('.nii.gz')] for item in os.listdir(anno_folder)]
+    elif dataset == 'JHH':
+        ids = pd.read_csv('JHH_test_stage.csv')['case_name'].tolist() + pd.read_csv('JHH_train_stage.csv')['case_name'].tolist()
+    elif dataset == 'JHH_stage_4':
+        ids = pd.read_csv('JHH_test_stage.csv').loc[pd.read_csv('JHH_test_stage.csv')['Tumor stage'] == 4, 'case_name'].tolist() + \
+            pd.read_csv('JHH_train_stage.csv').loc[pd.read_csv('JHH_train_stage.csv')['Tumor stage'] == 4, 'case_name'].tolist()
+    elif dataset == 'JHH_model':
+        anno_folder='/ccvl/net/ccvl15/yucheng/KidneyDiff/3D-TransUNet/outv2/Dataset1026-JHHReports_converted/1013/'
+        ids=os.listdir(anno_folder)
+    elif dataset == 'custom':
+        folder = args.ct_folder
+        anno_folder = args.mask_folder
+        ids = [f for f in os.listdir(folder) if (os.path.isdir(os.path.join(folder, f)) and 'BDMAP' in f)]
+        print(f'Custom dataset folder: {folder}')
+        print(f'Custom dataset annotation folder: {anno_folder}')
+        print('Number of cases in custom dataset:', len(ids))
+        if len(ids) == 0:
+            raise ValueError('No cases found in the custom dataset folder. Please check the folder path and ensure it contains subdirectories for each case. Did you name your cases with "BDMAP"? You can create symlinks to the original cases.')
+        
     else:
         raise ValueError('Dataset not implemented')
     
-    metadata=pd.read_csv('AbdomenAtlas_metadata.csv')
+    if 'JHH' in dataset:
+        metadata='JHH'
+    else:
+        metadata=pd.read_csv('AbdomenAtlas_metadata.csv')
 
     #remove duplicates and sort
     ids=list(set(ids))
@@ -1875,6 +1945,8 @@ def main():
     parser.add_argument('--th', default=0, type=int)#ignores tumors smaller than 50 mm3 (noise removal)
     parser.add_argument('--pancreas_only', action='store_true', default=False, help='Run only pancreatic cancer cases in abdomen atlas (Datastet must be AA)')
     parser.add_argument('--colon_only', action='store_true', default=False, help='Run only colon cancer cases in abdomen atlas (Datastet must be AA)')
+    parser.add_argument('--ct_folder', type=str, default='/mnt/T9/AbdomenAtlasPro/', help='Folder containing CT scans for custom dataset')
+    parser.add_argument('--mask_folder', type=str, default='/mnt/T8/AbdomenAtlasPre/', help='Folder containing masks for custom dataset')
     
     #remove error_log_report_creation.txt if it exists
     if os.path.exists('error_log_report_creation.txt'):
