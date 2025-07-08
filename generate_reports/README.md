@@ -1,5 +1,12 @@
 # Generate Reports from segmentation
 
+### Perform tumor and organ segmentation
+
+You may create reports from manually made segmentation masks, or from AI made masks. You will need both organ masks (liver, kidney, pancreas, spleen) and tumor masks (liver, kidney, pancreas).
+
+- Tumor masks: we used DiffTumor to create tumor masks, https://huggingface.co/qicq1c/DiffTumor
+- Organ masks: see [RadGPT/generate_reports/organ_masks/README.md](RadGPT/generate_reports/organ_masks/README.md)
+
 ### Dataset Format
 
 Assemble the dataset in this format:
