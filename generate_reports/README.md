@@ -4,7 +4,7 @@
 
 You may create reports from manually made segmentation masks, or from AI made masks. You will need both organ masks (liver, kidney, pancreas, spleen) and tumor masks (liver, kidney, pancreas). Our manually made tumor masks will be released soon. You can create AI-made masks with the code below:
 
-- Tumor masks: we used DiffTumor to create tumor masks, https://huggingface.co/qicq1c/DiffTumor
+- Tumor masks: see https://huggingface.co/qicq1c/DiffTumor
 - Organ masks: see [organ_masks/README.md](organ_masks/README.md)
 
 ### Dataset Format
