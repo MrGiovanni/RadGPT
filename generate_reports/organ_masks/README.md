@@ -8,7 +8,7 @@ This code creates the organ and organ sub-segment (e.g. pancreatic head, body an
 
 1. Download our organ segmenter from huggingface.co/prasb/OrganSubSegmenter/: [click here](https://huggingface.co/prasb/OrganSubSegmenter/resolve/main/nnUNetTrainer__nnUNetPlannerResEncL_torchres_isotropic__3d_fullres.zip?download=true) or use the command below
 ```bash
-cd R-Super/organ_masks
+cd RadGPT/generate_reports/organ_masks/
 conda create -n hf python=3.12 -y
 conda activate hf pip
 pip install huggingface-hub
@@ -97,8 +97,6 @@ python split_labels.py --input_dir /path/to/nnunet/output/ --output_dir /path/to
 
 <details>
   <summary>(Optional) Train nnU-Net to sub-segment organs</summary>
-
-If you want to apply R-Super to segment tumors in organs that our nnU-Net does not segment, you will need to train your own nnU-Net to create the segmentation masks for these organs. The code below explains how to train the nnU-Net for organ segmentation. It uses the AbdomenAtlas 3.0 dataset, found at https://github.com/MrGiovanni/RadGPT/.
 
 
 ### (I) prepare dataset
