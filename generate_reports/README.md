@@ -63,7 +63,7 @@ RadGPT adapts the style of the structured reports, mimicking the style of human-
 <summary style="margin-left: 25px;">[Optional] Match the writing style of any hospital.</summary>
 <div style="margin-left: 25px;">
     
-If you substitute free_text_reports.csv with the reports from any institution, RadGPT will create narrative reports in the style of that institution. You will need to include in the CSV which are the tumor types found in each of these reports. You can extract this information using LLMs (see [evaluate_reports/README.md](evaluate_reports/README.md)).
+If you substitute free_text_reports.csv with the reports from any institution, RadGPT will create narrative reports in the style of that institution. You will need to include in the CSV which are the tumor types found in each of these reports. You can extract this information using LLMs (see [evaluate_reports/README.md](evaluate_reports/README.md)). Format the dataset according to the example free_text_reports.csv.
 </div>
 </details>
 
