@@ -12,14 +12,14 @@ import numpy as np
 
 def extract_findings(report):
         """Extract the findings section."""
-        findings, _, _ = report.partition("IMPRESSIONS:")
+        findings, _, _ = report.partition("IMPRESSION:")
         return findings.strip() if findings else report.strip()
 
 def extract_organ_sections(findings):
     """Extract sections for Kidney, Liver, and Pancreas."""
     sections = {}
     organ_names = ["Pancreas", "Liver", "Kidney", "Colon", "Spleen"]
-    end_markers = ["Spleen", "IMPRESSIONS"]
+    end_markers = ["Spleen", "IMPRESSION"]
     
     for organ in organ_names:
         # Find start of the organ section
@@ -129,7 +129,7 @@ def parse_lesions(organ_sections):
         #print('Section for:',organ, 'Inside parse_lesions')
         #print(findings)
         lesion_names = ["malignant tumors", "cysts", "lesions","PDACs"]
-        end_markers = ["Pancreas:", "Liver:", "Kidney:", "Colon:","Spleen:", "IMPRESSIONS"]
+        end_markers = ["Pancreas:", "Liver:", "Kidney:", "Colon:","Spleen:", "IMPRESSION"]
         #remove organ name from the list
         end_markers.remove(organ.capitalize()+':')
 
@@ -521,8 +521,8 @@ def main():
     if args.narrative_reports is not None:
         big_table['narrative report'] = big_table['narrative report'].str.strip().str.replace('cm^3', 'cc', regex=False).str.replace('cm³', 'cc', regex=False).str.replace('kindeys', 'kidneys', regex=False)
     if args.fusion_reports is not None:
-        big_table['fusion structured report'] = big_table['fusion structured report'].str.strip().str.replace('cm^3', 'cc', regex=False).str.replace('cm³', 'cc', regex=False).str.replace(r'\nFINDINGS:', r'\n\nFINDINGS:', regex=True).str.replace(r'\nIMPRESSIONS:', r'\n\nIMPRESSIONS:', regex=True).str.replace('kindeys', 'kidneys', regex=False)
-        big_table['fusion narrative report'] = big_table['fusion narrative report'].str.strip().str.replace('cm^3', 'cc', regex=False).str.replace('cm³', 'cc', regex=False).str.replace(r'\nFINDINGS:', r'\n\nFINDINGS:', regex=True).str.replace(r'\nIMPRESSIONS:', r'\n\nIMPRESSIONS:', regex=True).str.replace('kindeys', 'kidneys', regex=False)
+        big_table['fusion structured report'] = big_table['fusion structured report'].str.strip().str.replace('cm^3', 'cc', regex=False).str.replace('cm³', 'cc', regex=False).str.replace(r'\nFINDINGS:', r'\n\nFINDINGS:', regex=True).str.replace(r'\nIMPRESSION:', r'\n\nIMPRESSION:', regex=True).str.replace('kindeys', 'kidneys', regex=False)
+        big_table['fusion narrative report'] = big_table['fusion narrative report'].str.strip().str.replace('cm^3', 'cc', regex=False).str.replace('cm³', 'cc', regex=False).str.replace(r'\nFINDINGS:', r'\n\nFINDINGS:', regex=True).str.replace(r'\nIMPRESSION:', r'\n\nIMPRESSION:', regex=True).str.replace('kindeys', 'kidneys', regex=False)
 
     #for columns containing lesion, replace nan by 0
     big_table=fill_nan_in_specific_columns(big_table)
