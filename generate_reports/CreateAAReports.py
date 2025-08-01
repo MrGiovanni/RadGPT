@@ -1712,11 +1712,10 @@ def real_multi_organ_report(folder,names,anno_folder,item,skip_incomplete,plot,N
                         impressions += 'Massively enlarged right kidney. '
                     elif 'Left kidney size is massively enlarged' in report:
                         impressions += 'Massively enlarged left kidney. '
-                    #other organs
-                    elif 'massively enlarged' in findings:
-                        impressions += f'Massively enlarged {clss}. '
-                    elif 'enlarged' in findings:
-                        impressions += f'Enlarged {clss}. '
+                    elif 'massively enlarged spleen' in findings:
+                        impressions += f'Massively enlarged spleen. '
+                    elif 'enlarged spleen' in findings:
+                        impressions += f'Enlarged spleen. '
                 impressions+=report[report.find('IMPRESSION: \n')+len('IMPRESSION: \n'):]#+'\n'
             else:
                 findings+=report+'\n'
@@ -1735,10 +1734,10 @@ def real_multi_organ_report(folder,names,anno_folder,item,skip_incomplete,plot,N
                     elif 'Left kidney size is massively enlarged' in report:
                         impressions += 'Massively enlarged left kidney. '
                     #other organs
-                    elif 'massively enlarged' in findings:
-                        impressions += f'Massively enlarged {clss}. \n'
-                    elif 'enlarged' in findings:
-                        impressions += f'Enlarged {clss}. \n'
+                    elif 'massively enlarged spleen' in findings:
+                        impressions += f'Massively enlarged spleen. \n'
+                    elif 'enlarged spleen' in findings:
+                        impressions += f'Enlarged spleen. \n'
     if findings=='':
         return
     if impressions=='':
@@ -1830,21 +1829,17 @@ def AbdomenAtlasReport(plot=False,restart_csv=False,skip_incomplete=True,csv_fil
     Generates a report for AbdomenAtlas data.
     """
     
-    folder='/mnt/T9/AbdomenAtlasPro/'
+    folder='/projects/bodymaps/Data/image_only/AbdomenAtlasPro/AbdomenAtlasPro/'
     global anno_folder
-    anno_folder='/mnt/T8/AbdomenAtlasPre/'
+    anno_folder='/projects/bodymaps/Data/mask_only/AbdomenAtlasPro/AbdomenAtlasPro/'
 
     if dataset=='AAMini':
-        folder='/mnt/realccvl15/zzhou82/data/AbdomenAtlas/image_only/AbdomenAtlas1.1Mini/AbdomenAtlas1.1Mini/'
-        anno_folder='/mnt/realccvl15/zzhou82/data/AbdomenAtlas/mask_only/AbdomenAtlas3.0Mini/AbdomenAtlas3.0Mini/'
+        folder='/projects/bodymaps/Data/image_only/AbdomenAtlas1.1Mini/AbdomenAtlas1.1Mini/'
+        anno_folder='/projects/bodymaps/Data/mask_only/AbdomenAtlas3.0Mini/AbdomenAtlas3.0Mini/'
 
     if dataset=='AA' or dataset=='AAMini':
-        try:
-            ids=sorted([x for x in os.listdir('/mnt/ccvl15/zzhou82/data/AbdomenAtlas/image_mask/AbdomenAtlas1.1Mini/AbdomenAtlas1.1Mini/')\
-            if os.path.isdir(os.path.join(folder,x))])
-        except:
-            ids=sorted([x for x in os.listdir('/ccvl/net/ccvl15/zzhou82/data/AbdomenAtlas/image_mask/AbdomenAtlas1.1Mini/AbdomenAtlas1.1Mini/')\
-            if os.path.isdir(os.path.join(folder,x))])
+        ids=sorted([x for x in os.listdir('/projects/bodymaps/Data/image_only/AbdomenAtlas1.1Mini/AbdomenAtlas1.1Mini/')\
+        if os.path.isdir(os.path.join(folder,x))])
         if args.pancreas_only:
             # Load the list from the file
             with open('/ccvl/net/ccvl15/pedro/pancreatic_cases.txt', 'r') as f:
