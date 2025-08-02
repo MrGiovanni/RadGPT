@@ -929,25 +929,30 @@ def get_paths(folder,anno_folder,item,clss):
                 lesion=os.path.join(anno_folder,item,f'segmentations/colon_lesion.nii.gz')
         if clss!='colon':
             for c in classes:
+                if 'pancrea' in c:
+                    if os.path.isfile(os.path.join(anno_folder,item,f'segmentations/{c}_lesion.nii.gz')):
+                        if lesion is None:
+                            lesion=os.path.join(anno_folder,item,f'segmentations/{c}_lesion.nii.gz')
+                else:
                 #load lesions
-                if os.path.isfile(os.path.join(anno_folder,item,f'segmentations/{c}_tumor.nii.gz')):
-                    if tumor is None:
-                        tumor=os.path.join(anno_folder,item,f'segmentations/{c}_tumor.nii.gz')
-                if os.path.isfile(os.path.join(anno_folder,item,f'segmentations/{c}_cyst.nii.gz')):
-                    if cyst is None:
-                        cyst=os.path.join(anno_folder,item,f'segmentations/{c}_cyst.nii.gz')
-                if os.path.isfile(os.path.join(anno_folder,item,f'segmentations/{c}_lesion.nii.gz')):
-                    if lesion is None:
-                        lesion=os.path.join(anno_folder,item,f'segmentations/{c}_lesion.nii.gz')
+                    if os.path.isfile(os.path.join(anno_folder,item,f'segmentations/{c}_tumor.nii.gz')):
+                        if tumor is None:
+                            tumor=os.path.join(anno_folder,item,f'segmentations/{c}_tumor.nii.gz')
+                    if os.path.isfile(os.path.join(anno_folder,item,f'segmentations/{c}_cyst.nii.gz')):
+                        if cyst is None:
+                            cyst=os.path.join(anno_folder,item,f'segmentations/{c}_cyst.nii.gz')
+                    if os.path.isfile(os.path.join(anno_folder,item,f'segmentations/{c}_lesion.nii.gz')):
+                        if lesion is None:
+                            lesion=os.path.join(anno_folder,item,f'segmentations/{c}_lesion.nii.gz')
 
         if clss=='pancreas':
             pdac=None
             pnet=None
-            for c in classes:
-                if os.path.isfile(os.path.join(anno_folder,item,f'segmentations/{c}_pdac.nii.gz')):
-                    pdac=os.path.join(anno_folder,item,f'segmentations/{c}_pdac.nii.gz')
-                if os.path.isfile(os.path.join(anno_folder,item,f'segmentations/{c}_pnet.nii.gz')):
-                    pnet=os.path.join(anno_folder,item,f'segmentations/{c}_pnet.nii.gz')
+            #for c in classes:
+            #    if os.path.isfile(os.path.join(anno_folder,item,f'segmentations/{c}_pdac.nii.gz')):
+            #        pdac=os.path.join(anno_folder,item,f'segmentations/{c}_pdac.nii.gz')
+            #    if os.path.isfile(os.path.join(anno_folder,item,f'segmentations/{c}_pnet.nii.gz')):
+            #        pnet=os.path.join(anno_folder,item,f'segmentations/{c}_pnet.nii.gz')
         else:
             pdac=None
             pnet=None
@@ -1712,10 +1717,10 @@ def real_multi_organ_report(folder,names,anno_folder,item,skip_incomplete,plot,N
                         impressions += 'Massively enlarged right kidney. '
                     elif 'Left kidney size is massively enlarged' in report:
                         impressions += 'Massively enlarged left kidney. '
-                    elif 'massively enlarged spleen' in findings:
-                        impressions += f'Massively enlarged spleen. '
-                    elif 'enlarged spleen' in findings:
-                        impressions += f'Enlarged spleen. '
+                    elif f"{clss.capitalize()} is massively enlarged" in findings:
+                        impressions += f'Massively enlarged {clss}. '
+                    elif f"{clss.capitalize()} is enlarged" in findings:
+                        impressions += f'Enlarged {clss}. '
                 impressions+=report[report.find('IMPRESSION: \n')+len('IMPRESSION: \n'):]#+'\n'
             else:
                 findings+=report+'\n'
@@ -1734,10 +1739,10 @@ def real_multi_organ_report(folder,names,anno_folder,item,skip_incomplete,plot,N
                     elif 'Left kidney size is massively enlarged' in report:
                         impressions += 'Massively enlarged left kidney. '
                     #other organs
-                    elif 'massively enlarged spleen' in findings:
-                        impressions += f'Massively enlarged spleen. \n'
-                    elif 'enlarged spleen' in findings:
-                        impressions += f'Enlarged spleen. \n'
+                    elif f"{clss.capitalize()} is massively enlarged" in findings:
+                        impressions += f'Massively enlarged {clss}. '
+                    elif f"{clss.capitalize()} is enlarged" in findings:
+                        impressions += f'Enlarged {clss}. '
     if findings=='':
         return
     if impressions=='':
