@@ -19,7 +19,7 @@ source ~/.bashrc
 
 ```bash
 git clone https://github.com/MrGiovanni/RadGPT
-cd RadGPT/LabelerLLM
+cd RadGPT/evluate_reports
 conda create -n vllm python=3.12 -y
 conda activate vllm
 conda install -y ipykernel
