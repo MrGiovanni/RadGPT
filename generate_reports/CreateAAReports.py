@@ -24,7 +24,7 @@ import re
 lock = multiprocessing.Lock()
 
 
-def load_canonical(path, orientation=('R', 'A', 'S')):
+def load_canonical_original(path, orientation=('R', 'A', 'S')):
     """
     Loads a NIfTI file and reorients it to the specified canonical orientation (default: RAS).
 
@@ -36,6 +36,7 @@ def load_canonical(path, orientation=('R', 'A', 'S')):
     - reoriented_img: Nifti1Image reoriented to the specified orientation
     """
     # Load the image
+    print(f'Loading: {path}')
     img = nib.load(path)
 
     # Get the orientation transform to reorient the image
@@ -55,6 +56,28 @@ def load_canonical(path, orientation=('R', 'A', 'S')):
     reoriented_img.header.set_zooms(tuple(abs(new_affine[i, i]) for i in range(3)))
 
     return reoriented_img
+
+def load_canonical(src):
+    """
+    Load a NIfTI and return a *consistent* RAS-oriented image.
+    - Accepts a filesystem path or an existing NIfTI image.
+    - Always returns data and affine that agree in RAS space.
+    """
+    if isinstance(src, (str, os.PathLike)):
+        print(f"Loading: {src}")
+        img = nib.load(src)
+    elif isinstance(src, nib.spatialimages.SpatialImage):
+        img = src
+    else:
+        raise TypeError("load_canonical expects a path or a NIfTI image (not a NumPy array).")
+
+    # Reorient both data and affine robustly
+    img = nib.as_closest_canonical(img)
+
+    # Make sure sform/qform match affine (prevents downstream surprises)
+    img.set_sform(img.affine, code=1)
+    img.set_qform(img.affine, code=1)
+    return img
 
 # Supporting functions
 def get_orientation_transform(img, orientation=('L', 'P', 'S')):
@@ -929,30 +952,25 @@ def get_paths(folder,anno_folder,item,clss):
                 lesion=os.path.join(anno_folder,item,f'segmentations/colon_lesion.nii.gz')
         if clss!='colon':
             for c in classes:
-                if 'pancrea' in c:
-                    if os.path.isfile(os.path.join(anno_folder,item,f'segmentations/{c}_lesion.nii.gz')):
-                        if lesion is None:
-                            lesion=os.path.join(anno_folder,item,f'segmentations/{c}_lesion.nii.gz')
-                else:
                 #load lesions
-                    if os.path.isfile(os.path.join(anno_folder,item,f'segmentations/{c}_tumor.nii.gz')):
-                        if tumor is None:
-                            tumor=os.path.join(anno_folder,item,f'segmentations/{c}_tumor.nii.gz')
-                    if os.path.isfile(os.path.join(anno_folder,item,f'segmentations/{c}_cyst.nii.gz')):
-                        if cyst is None:
-                            cyst=os.path.join(anno_folder,item,f'segmentations/{c}_cyst.nii.gz')
-                    if os.path.isfile(os.path.join(anno_folder,item,f'segmentations/{c}_lesion.nii.gz')):
-                        if lesion is None:
-                            lesion=os.path.join(anno_folder,item,f'segmentations/{c}_lesion.nii.gz')
+                if os.path.isfile(os.path.join(anno_folder,item,f'segmentations/{c}_tumor.nii.gz')):
+                    if tumor is None:
+                        tumor=os.path.join(anno_folder,item,f'segmentations/{c}_tumor.nii.gz')
+                if os.path.isfile(os.path.join(anno_folder,item,f'segmentations/{c}_cyst.nii.gz')):
+                    if cyst is None:
+                        cyst=os.path.join(anno_folder,item,f'segmentations/{c}_cyst.nii.gz')
+                if os.path.isfile(os.path.join(anno_folder,item,f'segmentations/{c}_lesion.nii.gz')):
+                    if lesion is None:
+                        lesion=os.path.join(anno_folder,item,f'segmentations/{c}_lesion.nii.gz')
 
         if clss=='pancreas':
             pdac=None
             pnet=None
-            #for c in classes:
-            #    if os.path.isfile(os.path.join(anno_folder,item,f'segmentations/{c}_pdac.nii.gz')):
-            #        pdac=os.path.join(anno_folder,item,f'segmentations/{c}_pdac.nii.gz')
-            #    if os.path.isfile(os.path.join(anno_folder,item,f'segmentations/{c}_pnet.nii.gz')):
-            #        pnet=os.path.join(anno_folder,item,f'segmentations/{c}_pnet.nii.gz')
+            for c in classes:
+                if os.path.isfile(os.path.join(anno_folder,item,f'segmentations/{c}_pdac.nii.gz')):
+                    pdac=os.path.join(anno_folder,item,f'segmentations/{c}_pdac.nii.gz')
+                if os.path.isfile(os.path.join(anno_folder,item,f'segmentations/{c}_pnet.nii.gz')):
+                    pnet=os.path.join(anno_folder,item,f'segmentations/{c}_pnet.nii.gz')
         else:
             pdac=None
             pnet=None
@@ -967,7 +985,7 @@ def get_paths(folder,anno_folder,item,clss):
         if os.path.isfile(os.path.join(anno_folder,item,'segmentations/spleen.nii.gz')):
             organ=os.path.join(anno_folder,item,'segmentations/spleen.nii.gz')
         else:
-            organ=os.path.join(anno_folder,item,'segmentations/_spleen.nii.gz')
+            organ=os.path.join(anno_folder,item,'segmentations/__spleen.nii.gz')
 
         organ=load_canonical(organ).get_fdata().astype('uint8')
         ct=os.path.join(folder,item,'ct.nii.gz')
@@ -979,7 +997,7 @@ def get_paths(folder,anno_folder,item,clss):
         ct, _ = resample_image(ct, original_spacing=spacing,
                                                 target_spacing=(1, 1, 1))
         organ=organ.astype('float32')
-        text, segments, vol, organ_hu, organ_hu_std=organ_text(False,None,ct,organ,spacing,clss,skip_incomplete=None,item=None)
+        text, segments, vol, organ_hu, organ_hu_std=organ_text(False,None,ct,organ,spacing,clss,skip_incomplete=None,item=None, anno_folder=anno_folder)
         return text
         #vol=measure_volume(organ,spacing=spacing,check_border=True)
         #organ_hu,organ_hu_std=measure_organ_hu(organ,0*organ,ct)
@@ -1179,7 +1197,7 @@ def write_lesion_report(tumor,ct,organ,organ_hu,item,spacing,resize_factor,erode
             #pancreatic cancer staging
         if lesion_type!='cyst' and clss=='pancreas':
             try:
-                interaction,tx,stage,contacted_organs=stg.stage(path,debug=False,size=sizes[n]['longest_diameter']/10,pnet=(lesion_type=='PNET'))
+                interaction,tx,stage,contacted_organs=stg.stage(path,debug=True,size=sizes[n]['longest_diameter']/10,pnet=(lesion_type=='PNET'))
                 stages[n]=stage
                 interactions[n]=interaction
                 locations[n]=sizes[n]['tumor_segment']
@@ -1347,8 +1365,8 @@ def write_lesion_report(tumor,ct,organ,organ_hu,item,spacing,resize_factor,erode
 
 
 def organ_text(healthy,tumors,ct,organ,spacing,clss,skip_incomplete,item,organ_right=None,organ_left=None,seg_pth=None,
-               spleen_hu=None,phase=None):
-    global anno_folder
+               spleen_hu=None,phase=None, anno_folder=None):
+    #global anno_folder
     
     if tumors is not None:
         organ_hu,organ_hu_std=measure_organ_hu(organ,tumors,ct)
@@ -1635,21 +1653,21 @@ def create_report(folder,anno_folder,item,clss,names,N=0,plot=False,skip_incompl
     if tumor is None and cyst is None and lesion is None and pdac is None and pnet is None:
         #not clear if healthy
         text, segments, vol, organ_hu, organ_hu_std=organ_text(False,None,ct,organ,spacing,clss,skip_incomplete,item,organ_right,organ_left,
-                                                                spleen_hu=spleen_hu,phase=phase)
+                                                                spleen_hu=spleen_hu,phase=phase, anno_folder=anno_folder)
         if clss=='colon':
             text=''
         return text
     elif healthy:
         #healthy
         text, segments, vol, organ_hu, organ_hu_std=organ_text(True,all_lesions,ct,organ,spacing,clss,skip_incomplete,item,organ_right,organ_left,
-                                                                spleen_hu=spleen_hu,phase=phase)
+                                                                spleen_hu=spleen_hu,phase=phase, anno_folder=anno_folder)
         if clss=='colon':
             text=''
         return text
     else:
         #not healthy
         text, segments, vol, organ_hu, organ_hu_std=organ_text(False,all_lesions,ct,organ,spacing,clss,skip_incomplete,item,organ_right,organ_left,
-                                                                spleen_hu=spleen_hu,phase=phase)
+                                                                spleen_hu=spleen_hu,phase=phase, anno_folder=anno_folder)
         for problem,lesion_type in zip([pdac,pnet,tumor,cyst,lesion],['PDAC','PNET','malignant tumor','cyst','lesion']):
             if problem is not None and problem.sum()>0:
                 texts.append(write_lesion_report(problem,ct,organ,organ_hu,item,spacing,resize_factor,erode,th,clss,skip_incomplete,plot,
@@ -1717,9 +1735,10 @@ def real_multi_organ_report(folder,names,anno_folder,item,skip_incomplete,plot,N
                         impressions += 'Massively enlarged right kidney. '
                     elif 'Left kidney size is massively enlarged' in report:
                         impressions += 'Massively enlarged left kidney. '
-                    elif f"{clss.capitalize()} is massively enlarged" in findings:
+                    #other organs
+                    elif 'massively enlarged' in findings:
                         impressions += f'Massively enlarged {clss}. '
-                    elif f"{clss.capitalize()} is enlarged" in findings:
+                    elif 'enlarged' in findings:
                         impressions += f'Enlarged {clss}. '
                 impressions+=report[report.find('IMPRESSION: \n')+len('IMPRESSION: \n'):]#+'\n'
             else:
@@ -1739,10 +1758,10 @@ def real_multi_organ_report(folder,names,anno_folder,item,skip_incomplete,plot,N
                     elif 'Left kidney size is massively enlarged' in report:
                         impressions += 'Massively enlarged left kidney. '
                     #other organs
-                    elif f"{clss.capitalize()} is massively enlarged" in findings:
-                        impressions += f'Massively enlarged {clss}. '
-                    elif f"{clss.capitalize()} is enlarged" in findings:
-                        impressions += f'Enlarged {clss}. '
+                    elif 'massively enlarged' in findings:
+                        impressions += f'Massively enlarged {clss}. \n'
+                    elif 'enlarged' in findings:
+                        impressions += f'Enlarged {clss}. \n'
     if findings=='':
         return
     if impressions=='':
@@ -1789,14 +1808,11 @@ def process_item(case, csv_file, folder, names, anno_folder, skip_incomplete, pl
                 phase=None
 
     if phase is None:
-        try:
-            #get only cases where 'MSD' or 'Decathlon' is in original_id (getting from FLARE) or original_dataset (getting from FLARE)
-            mapping=pd.read_csv('AbdomenAtlas1.0_id_mapping.csv')
-            msd=mapping[(mapping['original_id (getting from FLARE)'].str.contains('MSD')) | (mapping['original_id (getting from FLARE)'].str.contains('Decathlon')) | (mapping['original_dataset (getting from FLARE)'].str.contains('MSD')) | (mapping['original_dataset (getting from FLARE)'].str.contains('Decathlon'))]['AbdomenAtlas_id'].to_list()
-            if case in msd:
-                phase='Venous'
-        except:
-            pass
+        #get only cases where 'MSD' or 'Decathlon' is in original_id (getting from FLARE) or original_dataset (getting from FLARE)
+        mapping=pd.read_csv('AbdomenAtlas1.0_id_mapping.csv')
+        msd=mapping[(mapping['original_id (getting from FLARE)'].str.contains('MSD')) | (mapping['original_id (getting from FLARE)'].str.contains('Decathlon')) | (mapping['original_dataset (getting from FLARE)'].str.contains('MSD')) | (mapping['original_dataset (getting from FLARE)'].str.contains('Decathlon'))]['AbdomenAtlas_id'].to_list()
+        if case in msd:
+            phase='Venous'
 
     report = real_multi_organ_report(folder, names, anno_folder, case, skip_incomplete, plot, N,phase=phase,th=th)
     if report is not None:
@@ -1829,28 +1845,32 @@ def get_part(lst, parts, current_part):
 
 
 def AbdomenAtlasReport(plot=False,restart_csv=False,skip_incomplete=True,csv_file='AbdomenAtlasReports.csv',num_workers=10,
-                       current_part=0,parts=1,dataset='AA',th=None,args=None):
+                       current_part=0,parts=1,dataset='AA',th=None,args=None,pancreas_only=False):
     """
     Generates a report for AbdomenAtlas data.
     """
     
-    folder='/projects/bodymaps/Data/image_only/AbdomenAtlasPro/AbdomenAtlasPro/'
+    folder='/mnt/T9/AbdomenAtlasPro/'
     global anno_folder
-    anno_folder='/projects/bodymaps/Data/mask_only/AbdomenAtlasPro/AbdomenAtlasPro/'
+    anno_folder='/mnt/T8/AbdomenAtlasPre/'
 
     if dataset=='AAMini':
-        folder='/projects/bodymaps/Data/image_only/AbdomenAtlas1.1Mini/AbdomenAtlas1.1Mini/'
-        anno_folder='/projects/bodymaps/Data/mask_only/AbdomenAtlas3.0Mini/AbdomenAtlas3.0Mini/'
+        folder='/mnt/realccvl15/zzhou82/data/AbdomenAtlas/image_only/AbdomenAtlas1.1Mini/AbdomenAtlas1.1Mini/'
+        anno_folder='/mnt/realccvl15/zzhou82/data/AbdomenAtlas/mask_only/AbdomenAtlas3.0Mini/AbdomenAtlas3.0Mini/'
 
     if dataset=='AA' or dataset=='AAMini':
-        ids=sorted([x for x in os.listdir('/projects/bodymaps/Data/image_only/AbdomenAtlas1.1Mini/AbdomenAtlas1.1Mini/')\
-        if os.path.isdir(os.path.join(folder,x))])
-        if args.pancreas_only:
+        try:
+            ids=sorted([x for x in os.listdir('/mnt/ccvl15/zzhou82/data/AbdomenAtlas/image_mask/AbdomenAtlas1.1Mini/AbdomenAtlas1.1Mini/')\
+            if os.path.isdir(os.path.join(folder,x))])
+        except:
+            ids=sorted([x for x in os.listdir('/ccvl/net/ccvl15/zzhou82/data/AbdomenAtlas/image_mask/AbdomenAtlas1.1Mini/AbdomenAtlas1.1Mini/')\
+            if os.path.isdir(os.path.join(folder,x))])
+        if (args is not None) and args.pancreas_only:
             # Load the list from the file
             with open('/ccvl/net/ccvl15/pedro/pancreatic_cases.txt', 'r') as f:
                 p_loaded = [line.strip() for line in f]
             ids = [x for x in ids if x in p_loaded]
-        if args.colon_only:
+        if (args is not None) and args.colon_only:
             ids=[x for x in ids if os.path.isfile(os.path.join(anno_folder,x,'segmentations','colon_lesion.nii.gz'))]
     elif dataset == 'JHH_test':
         ids = pd.read_csv('JHH_testset_tumor_analysis.csv').drop_duplicates(subset=['case_name'])['case_name'].tolist()
@@ -1868,16 +1888,6 @@ def AbdomenAtlasReport(plot=False,restart_csv=False,skip_incomplete=True,csv_fil
     elif dataset == 'JHH_model':
         anno_folder='/ccvl/net/ccvl15/yucheng/KidneyDiff/3D-TransUNet/outv2/Dataset1026-JHHReports_converted/1013/'
         ids=os.listdir(anno_folder)
-    elif dataset == 'custom':
-        folder = args.ct_folder
-        anno_folder = args.mask_folder
-        ids = [f for f in os.listdir(folder) if (os.path.isdir(os.path.join(folder, f)) and 'BDMAP' in f)]
-        print(f'Custom dataset folder: {folder}')
-        print(f'Custom dataset annotation folder: {anno_folder}')
-        print('Number of cases in custom dataset:', len(ids))
-        if len(ids) == 0:
-            raise ValueError('No cases found in the custom dataset folder. Please check the folder path and ensure it contains subdirectories for each case. Did you name your cases with "BDMAP"? You can create symlinks to the original cases.')
-        
     else:
         raise ValueError('Dataset not implemented')
     
@@ -1945,8 +1955,6 @@ def main():
     parser.add_argument('--th', default=0, type=int)#ignores tumors smaller than 50 mm3 (noise removal)
     parser.add_argument('--pancreas_only', action='store_true', default=False, help='Run only pancreatic cancer cases in abdomen atlas (Datastet must be AA)')
     parser.add_argument('--colon_only', action='store_true', default=False, help='Run only colon cancer cases in abdomen atlas (Datastet must be AA)')
-    parser.add_argument('--ct_folder', type=str, default='/mnt/T9/AbdomenAtlasPro/', help='Folder containing CT scans for custom dataset')
-    parser.add_argument('--mask_folder', type=str, default='/mnt/T8/AbdomenAtlasPre/', help='Folder containing masks for custom dataset')
     
     #remove error_log_report_creation.txt if it exists
     if os.path.exists('error_log_report_creation.txt'):
