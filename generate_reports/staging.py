@@ -1,6 +1,6 @@
 import nibabel as nib
 import os
-from nibabel.processing import resample_from_to
+from nibabel.processing import resample_from_to, resample_to_output
 import numpy as np
 import copy
 from scipy.ndimage import label, binary_dilation, binary_erosion
@@ -19,7 +19,7 @@ from scipy.spatial.transform import Rotation as R
 from skimage.morphology import skeletonize_3d, dilation, ball
 from scipy.ndimage import label, generate_binary_structure, convolve
 from nibabel.orientations import aff2axcodes
-
+from skimage.morphology import disk
 
 
 import numpy as np
@@ -125,7 +125,7 @@ def clean_CA_end_simple(volume, slice_indices, ap_axis):
     return out
 
 
-def extract_proper_celiac_axis(aorta_data, celiac_data, affine):
+def extract_proper_celiac_axis(aorta_data, celiac_data, affine, denoise=True):
     """
     Extracts the proper celiac axis by removing the splenic and hepatic arteries.
     
@@ -137,15 +137,25 @@ def extract_proper_celiac_axis(aorta_data, celiac_data, affine):
     Returns:
     - output_volume: Boolean NumPy array of the extracted proper celiac axis.
     """
+    #copy originals
+    aorta_data_orig = aorta_data.copy()
+    celiac_data_orig = celiac_data.copy()
+    
+    
     celica_data = celiac_data.copy()
+    nib.save(nib.Nifti1Image(celica_data.astype(np.uint8), affine), 'debug_ca_before_erosion_dilation.nii.gz')
+    nib.save(nib.Nifti1Image(aorta_data.astype(np.uint8), affine), 'debug_aorta_before_erosion_dilation.nii.gz')
     aorta_data = binary_dilation(aorta_data, structure=ball(7))
-    # Step 1: Clean small branches
-    combined = celiac_data | aorta_data
-    eroded = binary_erosion(combined, structure=ball(3))
-    dilated = binary_dilation(eroded, structure=ball(4))
-    #cleaned_ca = celiac_data
-    cleaned_ca = dilated & celiac_data
-    #cleaned_ca = eroded & celiac_data
+    if denoise:
+        # Step 1: Clean small branches
+        combined = celiac_data | aorta_data
+        eroded = binary_erosion(combined, structure=ball(2))
+        dilated = binary_dilation(eroded, structure=ball(4))
+        #cleaned_ca = celiac_data
+        cleaned_ca = dilated & celiac_data
+        #cleaned_ca = eroded & celiac_data
+    else:
+        cleaned_ca = celiac_data
 
 
     #save ca and aorta for debugging
@@ -267,11 +277,12 @@ def extract_proper_celiac_axis(aorta_data, celiac_data, affine):
     output_volume=clean_CA_end_simple(output_volume,slice_indices, ap_axis)
     output_volume, cut_ca=clean_CA_end(output_volume,celica_data.copy(), affine)
 
-    #binary erosion and dilation
-    # Apply binary erosion and dilation with the structuring element
-    eroded_volume = binary_erosion(output_volume, structure=ball(4))
-    dilated_volume = binary_dilation(eroded_volume, structure=ball(5))
-    output_volume = np.logical_and(dilated_volume, celica_data)
+    if denoise:
+        #binary erosion and dilation
+        # Apply binary erosion and dilation with the structuring element
+        eroded_volume = binary_erosion(output_volume, structure=ball(4))
+        dilated_volume = binary_dilation(eroded_volume, structure=ball(5))
+        output_volume = np.logical_and(dilated_volume, celica_data)
 
     #return intersected_volume.astype(bool)
     # Keep only the largest 3D connected component
@@ -282,8 +293,10 @@ def extract_proper_celiac_axis(aorta_data, celiac_data, affine):
         largest_component_label = np.argmax(component_sizes) + 1
         final_output = (labeled_intersection == largest_component_label)
     else:
-        # No components were found, return an empty volume
-        raise ValueError('No components were found')
+        # No components were found
+        if denoise:
+            return (extract_proper_celiac_axis(aorta_data_orig, celiac_data_orig, affine, denoise=False))
+        raise ValueError('No components were found for the celiac axis')
 
 
     return final_output, ca_not_clean, cut_ca
@@ -658,7 +671,7 @@ def isolate_main_branch_final(volume, affine):
     output_volume = np.zeros_like(volume, dtype=bool)
 
     # Determine the threshold for the first 5% of non-zero slices
-    initial_slices = int(0.05 * len(z_indices))
+    initial_slices = max(int(0.05 * len(z_indices)),3)
     #initial_slices=1000
 
     # Initialize a variable to store the main component from the previous slice
@@ -1031,8 +1044,16 @@ def align_volume_x(volume, skeleton, volume2):
                                         order=0  # Linear interpolation (you can also use `order=0` for nearest-neighbor if binary data)
                                     )
     return rotated_volume, rotated_skeleton, rotated_volume2
+
+from scipy.ndimage import distance_transform_edt
+def outer_ring(mask, r_mm=2.0, thickness_px=1):
+    # mask: bool array (2D or 3D) of the vessel
+    dist = distance_transform_edt(~mask)          # distance to vessel in mm (voxels)
+    inner = max(r_mm - thickness_px, 0.0)
+    ring = (dist <= r_mm) & (dist > inner)
+    return ring
     
-def check_vessel_tumor_intersection(vessel, tumor,skeleton,n=5,affine=None,debug=False,vessel_type=None):
+def check_vessel_tumor_intersection(vessel, tumor,skeleton,n=5,affine=None,debug=True,vessel_type=None):
     intersection_percentages=[]
     start=0
     max_intersection=0
@@ -1082,16 +1103,31 @@ def check_vessel_tumor_intersection(vessel, tumor,skeleton,n=5,affine=None,debug
         aligned_skeleton = aligned_skeleton[crop_start:crop_end, :, :]
         aligned_tumor = aligned_tumor[crop_start:crop_end, :, :]
         
+        # --- NEW: pad in-plane to avoid ring clipping at ROI edges ---
+        r_mm = 2.0
+        thickness_px = 1
+        m = int(np.ceil(r_mm)) + thickness_px + 5  # safety margin
+
+        pad = ((0,0), (m,m), (m,m))  # no pad along slice axis; pad Y,Z
+        aligned_vessel = np.pad(aligned_vessel,   pad, mode='constant', constant_values=0)
+        aligned_tumor = np.pad(aligned_tumor,    pad, mode='constant', constant_values=0)
+        
         borders = np.zeros_like(aligned_vessel)
         #erode 2D, slice by slice
         for i in range(aligned_vessel.shape[0]):
-            borders[i]=aligned_vessel[i] ^ binary_erosion(aligned_vessel[i])
+            #borders[i]=aligned_vessel[i] ^ binary_erosion(aligned_vessel[i])
+            borders[i] = outer_ring(aligned_vessel[i], r_mm=r_mm, thickness_px=thickness_px)
         # Get borders of the aligned_vessel: original - eroded
         #eroded_vessel = binary_erosion(aligned_vessel)
         #borders = aligned_vessel ^ eroded_vessel
+        
+        #crop tumor boders, because we dilated it by 4 mm before
+        aligned_tumor_eroded = aligned_tumor.copy()
+        for i in range(aligned_tumor_eroded.shape[0]):
+            aligned_tumor_eroded[i] = binary_erosion(aligned_tumor_eroded[i], iterations=1)
 
         # Check number of border voxels that intersect with tumor
-        intersection_voxels = np.sum(borders & aligned_tumor)
+        intersection_voxels = np.sum(borders & aligned_tumor_eroded)
         border_voxels = np.sum(borders)
 
         #print('Shape of slice:', aligned_vessel.shape)
@@ -1100,13 +1136,14 @@ def check_vessel_tumor_intersection(vessel, tumor,skeleton,n=5,affine=None,debug
         if border_voxels > 0:
             intersection_percentages.append(intersection_voxels / border_voxels)
             #print('Slice:', start, 'Intersection percentage:', intersection_voxels / border_voxels)
-            if intersection_voxels / border_voxels>max_intersection:
-                max_intersection=intersection_voxels / border_voxels
-                #save the slice
-                if debug:
-                    nib.save(nib.Nifti1Image(aligned_vessel.astype(np.uint8)+2*aligned_tumor.astype(np.uint8),affine), vessel_type+'_aligned_volume_max_intersection.nii.gz')
-                    nib.save(nib.Nifti1Image(borders.astype(np.uint8),affine), vessel_type+'_borders.nii.gz')
-        
+            if (intersection_voxels / border_voxels>max_intersection):
+                if not ((max_intersection>0) and (border_voxels<8)):#skip slices with too small border voxels if we already have an intersection
+                    max_intersection=intersection_voxels / border_voxels
+                    #save the slice
+                    if debug:
+                        nib.save(nib.Nifti1Image(aligned_vessel.astype(np.uint8)+2*aligned_tumor.astype(np.uint8),affine), vessel_type+'_aligned_volume_max_intersection.nii.gz')
+                        nib.save(nib.Nifti1Image(borders.astype(np.uint8),affine), vessel_type+'_borders.nii.gz')
+            
         if debug:
             print('Intersection in slice:', start, 'is:', intersection_voxels / border_voxels, 'intersection voxels:', intersection_voxels, 'border voxels:', border_voxels)
             
@@ -1117,24 +1154,30 @@ def check_vessel_tumor_intersection(vessel, tumor,skeleton,n=5,affine=None,debug
 
 type2name={'SMA':'superior_mesenteric_artery.nii.gz','aorta':'aorta.nii.gz','CA and CHA':'celiac_aa.nii.gz','portal vein and SMV':'veins.nii.gz','IVC':'postcava.nii.gz'}
 
-def load_pancreatic(folder_path):
+def load_pancreatic(folder_path,dataset='AA'):
     pancreas_path = os.path.join(folder_path, 'pancreas.nii.gz')
     pancreas = cr.load_canonical(pancreas_path)
-
+    
+    # 2) Resample pancreas to 1x1x1 mm (keep orientation); order=0 for masks
+    pancreas = resample_to_output(pancreas, voxel_sizes=(1.0, 1.0, 1.0), order=0)
 
     pdac=os.path.join(folder_path, 'pancreatic_pdac.nii.gz')
+    if not os.path.exists(pdac) and dataset=='custom':
+        pdac=os.path.join(folder_path, '_pancreatic_pdac.nii.gz')
     if os.path.exists(pdac):
         pdac = cr.load_canonical(pdac)
         #check if orientation is the same
         if not np.allclose(pancreas.affine, pdac.affine):
             #reorient pdac to pancreas
-            pdac = resample_from_to(pdac, (pancreas.shape, pancreas.affine))
+            pdac = resample_from_to(pdac, (pancreas.shape, pancreas.affine), order=0)
         pnet = os.path.join(folder_path, 'pancreatic_pnet.nii.gz')
+        if not os.path.exists(pnet) and dataset=='custom':
+            pnet=os.path.join(folder_path, '_pancreatic_pnet.nii.gz')
         pnet = cr.load_canonical(pnet)
         #check if orientation is the same
         if not np.allclose(pancreas.affine, pnet.affine):
             #reorient pnet to pancreas
-            pnet = resample_from_to(pnet, (pancreas.shape, pancreas.affine))
+            pnet = resample_from_to(pnet, (pancreas.shape, pancreas.affine), order=0)
 
         pancreas_data = pancreas.get_fdata().astype(bool)
         pdac_data = pdac.get_fdata().astype(bool)
@@ -1145,28 +1188,38 @@ def load_pancreatic(folder_path):
         lesion = cr.load_canonical(lesion)
         if not np.allclose(pancreas.affine, lesion.affine):
             #reorient lesion to pancreas
-            lesion = resample_from_to(lesion, (pancreas.shape, pancreas.affine))
+            lesion = resample_from_to(lesion, (pancreas.shape, pancreas.affine), order=0)
         pancreas_data = pancreas.get_fdata().astype(bool)
         tumor_data = lesion.get_fdata().astype(bool)
+        
+    
     
     vessels={}
     for vessel_type in type2name.keys():
         vessel = os.path.join(folder_path, type2name[vessel_type])
         #print('Folder path:', folder_path)
         if not os.path.exists(vessel):
-            vessel=os.path.join('/ccvl/net/ccvl15/pedro/AtlasVessels/',folder_path[folder_path.rfind('BDMAP_'):folder_path.rfind('BDMAP_')+len('BDMAP_00000010')].replace('_',''),'segmentations',
+            vessel=os.path.join('/ccvl/net/ccvl15/psalvad2/AtlasVessels/',folder_path[folder_path.rfind('BDMAP_'):folder_path.rfind('BDMAP_')+len('BDMAP_00000010')].replace('_',''),'segmentations',
                                 type2name[vessel_type])
         if not os.path.exists(vessel):
-            vessel=os.path.join('/mnt/ccvl15/pedro/AtlasVessels/', folder_path[folder_path.rfind('BDMAP_'):folder_path.rfind('BDMAP_')+len('BDMAP_00000010')].replace('_',''),'segmentations',
+            vessel=os.path.join('/mnt/ccvl15/psalvad2/AtlasVessels/', folder_path[folder_path.rfind('BDMAP_'):folder_path.rfind('BDMAP_')+len('BDMAP_00000010')].replace('_',''),'segmentations',
                                 type2name[vessel_type])
         vessel = cr.load_canonical(vessel)
+        if vessel_type=='aorta':
+            #save as nifti for debugging
+            aorta_data=vessel.get_fdata().astype(bool)
+            nib.save(nib.Nifti1Image(aorta_data.astype(np.uint8), vessel.affine), 'debug_aorta_loaded_cannonical.nii.gz')
         #check if orientation is the same
         if not np.allclose(pancreas.affine, vessel.affine):
             #reorient vessel to pancreas
-            vessel = resample_from_to(vessel, (pancreas.shape, pancreas.affine))
+            vessel = resample_from_to(vessel, (pancreas.shape, pancreas.affine), order=0)
         #get data
         vessel_data = vessel.get_fdata().astype(bool)
         vessels[vessel_type]=vessel_data
+        if vessel_type=='aorta':
+            #save as nifti for debugging
+            aorta_data=vessel_data
+            nib.save(nib.Nifti1Image(aorta_data.astype(np.uint8), pancreas.affine), 'debug_aorta_loaded.nii.gz')
 
     dilated_tumor = binary_dilation(tumor_data)
 
@@ -1224,12 +1277,14 @@ def crop_to_tumor_box(tumor, vessel):
     
     return cropped_tumor, cropped_vessel
 
-def stage(path,debug=False,size=None,pnet=False):
-    pancreas, vessels, tumor, affine = load_pancreatic(path)
+def stage(path,debug=True,size=None,pnet=False,dataset='AA'):
+    pancreas, vessels, tumor, affine = load_pancreatic(path,dataset=dataset)
+    target_shape  = pancreas.shape
+    target_affine = affine
     print('Staging data loaded')
 
     #dilate tumor
-    tumor_dilated = binary_dilation(tumor,iterations=2)
+    tumor_dilated = binary_dilation(tumor,iterations=4) #4mm, compensates for spacing (2.5mm is usual). We later erode inside angle calculation function
     interaction={'SMA':0,'aorta':0,'CA':0,'portal vein and SMV':0,'IVC':0}
     #for key in vessel.keys():
     if debug:
@@ -1246,10 +1301,19 @@ def stage(path,debug=False,size=None,pnet=False):
             nib.save(nib.Nifti1Image(vessel.astype(np.uint8), affine), vessel_type+'_original.nii.gz')
         tumor = tumor_dilated.copy()
         #check if vessel intersects with tumor
+        
+        if vessel_type == 'aorta' and debug:
+            nib.save(
+                nib.Nifti1Image((vessel.astype(np.uint8) + 2 * tumor.astype(np.uint8)), affine),
+                'aorta_vs_tumor_precheck.nii.gz'
+            )
 
         if debug and vessel_type=='portal vein and SMV':
             main_vessel = isolate_main_branch_final(vessel, affine)
             nib.save(nib.Nifti1Image(main_vessel.astype(np.uint8), affine), vessel_type+'_main_branch_uncropped.nii.gz')
+            
+            #save the tumor vs vessel
+            nib.save(nib.Nifti1Image((main_vessel.astype(np.uint8) + 2 * tumor.astype(np.uint8)), affine), vessel_type+'_vs_tumor_uncropped.nii.gz')
             
         if not np.any(vessel & tumor):
             print('vessel does not intersect with tumor:', vessel_type)
@@ -1292,33 +1356,36 @@ def stage(path,debug=False,size=None,pnet=False):
         if debug:
             #save the skeleton
             nib.save(nib.Nifti1Image(skeleton.astype(np.uint8), affine), vessel_type+'_skeleton.nii.gz')
-
+            
         aligned_vessel, aligned_skeleton, aligned_tumor = align_volume_x(main_vessel, skeleton, tumor)
         if debug:
             #save aligned volume
             nib.save(nib.Nifti1Image(aligned_vessel.astype(np.uint8)+2*aligned_tumor.astype(np.uint8), affine), vessel_type+'_aligned_volume.nii.gz')
 
-        intersection_angle = check_vessel_tumor_intersection(aligned_vessel, aligned_tumor, aligned_skeleton,n=5,affine=affine,
+        intersection_angle = check_vessel_tumor_intersection(aligned_vessel, aligned_tumor, aligned_skeleton,n=4,affine=affine,
                                                              debug=debug,vessel_type=vessel_type)
         print('Intersection angle:', int(np.round(intersection_angle,0)))
         interaction[vessel_type]=int(np.round(intersection_angle,0))
 
     text='Vascular Involvement:\n'
-    contact_text=''
-    no_contact_text='Tumor does not contact: '
+    v_contact_text=''
+    v_no_contact_text='Tumor does not contact: '
     for vessel_type in vessels.keys():
         if interaction[vessel_type]==0:
-            no_contact_text+=f'{vessel_type}, '
+            v_no_contact_text+=f'{vessel_type}, '
         elif interaction[vessel_type]>0 and interaction[vessel_type]<180:
-            contact_text+=f'{vessel_type[0].capitalize()+vessel_type[1:]}: tumor contact but not encasement ({interaction[vessel_type]} degree contact with the tumor). \n'
+            v_contact_text+=f'{vessel_type[0].capitalize()+vessel_type[1:]}: tumor contact but not encasement ({interaction[vessel_type]} degree contact with the tumor). \n'
         elif interaction[vessel_type]>=180:
-            contact_text+=f'{vessel_type[0].capitalize()+vessel_type[1:]}: tumor encasement ({interaction[vessel_type]} degree contact with the tumor). \n'
-    if contact_text!='':
-        text+=contact_text
-    if no_contact_text!='Tumor does not contact: ':
-        text+=no_contact_text[:-2]+'. \n'
+            v_contact_text+=f'{vessel_type[0].capitalize()+vessel_type[1:]}: tumor encasement ({interaction[vessel_type]} degree contact with the tumor). \n'
+    if v_contact_text!='':
+        text+=v_contact_text
+    if v_no_contact_text!='Tumor does not contact: ':
+        text+=v_no_contact_text[:-2]+'. \n'
 
+    
     contacted_organs=[]
+    o_contact_text='Contact with adjacent organs: '
+    o_no_contact_text='Tumor does not contact: '
     organs = {
             'left adrenal gland': 'adrenal_gland_left.nii.gz',
             'spleen': 'spleen.nii.gz',
@@ -1336,29 +1403,32 @@ def stage(path,debug=False,size=None,pnet=False):
         if not os.path.exists(organ_path):
             continue
         organ = cr.load_canonical(organ_path)
+        if not np.allclose(target_affine, organ.affine):
+            organ = resample_from_to(organ, (target_shape, target_affine), order=0)
+        organ_data = organ.get_fdata().astype(bool)
         
         # Check if orientation is the same
-        if not np.allclose(affine, organ.affine):
+        #if not np.allclose(affine, organ.affine):
             # Reorient organ to match the tumor
-            organ = resample_from_to(organ, (tumor.shape, affine))
+        #    organ = resample_from_to(organ, (tumor.shape, affine), order=0)
         
         # Load organ data and check for overlap with the tumor
-        organ_data = organ.get_fdata().astype(bool)
+        #organ_data = organ.get_fdata().astype(bool)
 
         tumor, organ_data = crop_to_tumor_box(tumor_uncropped, organ_data)
 
         interaction[name] = np.any(organ_data & tumor)
         if np.any(organ_data & tumor):
-            contact_text += f'{name}, '
+            o_contact_text += f'{name}, '
             contacted_organs.append(name)
         else:
-            no_contact_text += f'{name}, '
-
+            o_no_contact_text += f'{name}, '
+            
     if pnet:
-        if contact_text!='Tumor contact with organs: ':
-            text+=contact_text[:-2]+'. \n'
-        if no_contact_text!='Tumor does not contact: ':
-            text+=no_contact_text[:-2]+'. \n'
+        if o_contact_text!='Contact with adjacent organs: ':
+            text+=o_contact_text[:-2]+'. \n'
+        if o_no_contact_text!='Tumor does not contact: ':
+            text+=o_no_contact_text[:-2]+'. \n'
 
     #get stage
     #PDAC
@@ -1376,10 +1446,16 @@ def stage(path,debug=False,size=None,pnet=False):
 	#•	T3: Tumor >4 cm, limited to the pancreas or any size that invades the duodenum or bile duct.
 	#•	T4: Tumor invades adjacent organs (e.g., stomach, spleen, colon, adrenal glands, kidneys) or major arteries (CA or SMA).
 
+    pnet_interaction = False
+    for key in ['stomach','spleen','colon','left adrenal gland','left kidney']:
+        if key in interaction and interaction[key]:
+            pnet_interaction = True
+            break
 
-    if interaction['SMA']>=180 or interaction['CA']>=180 or interaction['CHA']>180:
+
+    if interaction['SMA']>=180 or interaction['CA']>=180 or interaction['CHA']>=180:
         stage='T4'
-    elif pnet and (interaction['stomach'] or interacion['spleen'] or interaction['colon'] or interaction['adrenal gland left'] or interaction['kidney left']):
+    elif pnet and pnet_interaction:
         stage='T4'
     elif pnet and (interaction['duodenum'] or interaction['bile duct']):
         stage='T3'
