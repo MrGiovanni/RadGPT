@@ -466,10 +466,16 @@ def main():
 
     #load and clean structured reports
     try:
-        structured_reports = pd.read_csv(args.reports, usecols=['Case', 'Report'])
+        try:
+            structured_reports = pd.read_csv(args.reports, usecols=['Case', 'Report'])
+        except:
+            structured_reports = pd.read_csv(args.reports, usecols=['Case', ' Report'])
+            structured_reports.rename(columns={' Report':'Report'}, inplace=True)
     except:
-        structured_reports = pd.read_csv(args.reports, usecols=['Case', ' Report'])
-        structured_reports.rename(columns={' Report':'Report'}, inplace=True)
+        structured_reports = pd.read_csv(args.reports)
+        structured_reports.rename(columns={'BDMAP ID':'Case'}, inplace=True)
+        structured_reports.rename(columns={'structured report':'Report'}, inplace=True)
+        structured_reports = structured_reports[['Case','Report']]
     structured_reports.drop_duplicates(subset=['Case'], inplace=True)
     #drop nan
     structured_reports.dropna(subset=['Case'], inplace=True)
