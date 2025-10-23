@@ -17,7 +17,6 @@
 </div>
 
 
-[!NOTE]
 > The dataset is currently being uploaded to **Hugging Face**.  
 > Please hang on — it will be available in just a few more hours! 
 
