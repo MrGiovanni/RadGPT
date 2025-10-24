@@ -16,9 +16,10 @@
 ![logo](document/fig_teaser.png)
 </div>
 
+> [!NOTE]
+> **We have publicly released our dataset!**  
+> Find it here: [HuggingFace](https://huggingface.co/datasets/AbdomenAtlas/AbdomenAtlas3.0Mini/)
 
-> The dataset is currently being uploaded to **Hugging Face**.  
-> Please hang on — it will be available in just a few more hours! 
 
 AbdomenAtlas 3.0 is the first public dataset with high quality abdominal CTs and paired radiology reports. The database includes more than 9,000 CT scans with radiology reports and per-voxel annotations of liver, kidney and pancreatic tumors.
 
