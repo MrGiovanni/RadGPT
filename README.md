@@ -38,7 +38,7 @@ ICCV, 2025 <br/>
 
 ## Download the AbdomenAtlas 3.0 Dataset
 
-You can directly download AbdomenAtlas 3.0 from [HuggingFace](https://huggingface.co/datasets/AbdomenAtlas/AbdomenAtlas3.0Mini/) using your preferred HuggingFace dowload method (e.g., huggingface-cli), *or you can just use the download code below*:
+You can directly download AbdomenAtlas 3.0 from [HuggingFace](https://huggingface.co/datasets/AbdomenAtlas/AbdomenAtlas3.0Mini/) using your preferred HuggingFace dowload method (e.g., huggingface-cli), *or you can just use the simple download code below*:
 
 ```bash
 git clone https://github.com/PedroRASB/RadGPT
@@ -48,10 +48,10 @@ bash download_atlas_3.sh
 
 ### Train/Test Splits
 
-You can find csv files with the training and testing IDs inside the downloaded dataset.
+You can find csv files with the training and testing IDs inside the downloaded dataset (folder TrainTestIDS).
 
-- IID train/test split: the dataset was randomly partitioned into traing and testing. This train/test partitions were used in our paper (IID results).
-- OOD train/test split: the trainng and testing patitions come from different hospitals. This is useful for external evaluation, but the training set here is smaller. This partition was not used in our paper.
+- IID train/test split: the dataset was randomly partitioned into traing (90%) and testing (10%). These train/test partitions were used in our paper (IID results).
+- OOD train/test split: the training and testing patitions come from different hospitals. This is useful for external evaluation, but the training set here is smaller (50% of the whole dataset). These train/test partitions were not used in our paper.
 
 ## Installation
 
