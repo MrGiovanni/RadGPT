@@ -18,7 +18,7 @@
 
 > [!NOTE]
 > **We have publicly released our dataset!**  
-> Find it here: [HuggingFace](https://huggingface.co/datasets/AbdomenAtlas/AbdomenAtlas3.0Mini/)
+> Please check the download intructions below.
 
 
 AbdomenAtlas 3.0 is the first public dataset with high quality abdominal CTs and paired radiology reports. The database includes more than 9,000 CT scans with radiology reports and per-voxel annotations of liver, kidney and pancreatic tumors.
@@ -35,6 +35,16 @@ Our “superhuman” reports are more accurate, detailed, standardized, and gene
 *Johns Hopkins University* <br/>
 ICCV, 2025 <br/>
 <a href='https://www.zongweiz.com/dataset'><img src='https://img.shields.io/badge/Project-Page-Green'></a> <a href='https://www.cs.jhu.edu/~zongwei/publication/bassi2025radgpt.pdf'><img src='https://img.shields.io/badge/Paper-PDF-purple'></a> <a href='document/bassi2024rsna_radgpt.pdf'><img src='https://img.shields.io/badge/Slides-RSNA-orange'></a> [![YouTube](https://badges.aleen42.com/src/youtube.svg)](https://youtu.be/WxgyHNi2tLc)
+
+## Download the Dataset
+
+You can directly download AbdomenAtlas 3.0 from [HuggingFace](https://huggingface.co/datasets/AbdomenAtlas/AbdomenAtlas3.0Mini/) using your preferred HuggingFace dowload method (e.g., huggingface-cli), or you can just use the download code below:
+
+```bash
+git clone https://github.com/PedroRASB/RadGPT
+cd RadGPT
+bash download_atlas_3.sh
+```
 
 ## Installation
 
