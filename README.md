@@ -46,6 +46,13 @@ cd RadGPT
 bash download_atlas_3.sh
 ```
 
+### Train/Test Splits
+
+You can find csv files with the training and testing IDs inside the downloaded dataset.
+
+- IID train/test split: the dataset was randomly partitioned into traing and testing. This train/test partitions were used in our paper (IID results).
+- OOD train/test split: the trainng and testing patitions come from different hospitals. This is useful for external evaluation, but the training set here is smaller. This partition was not used in our paper.
+
 ## Installation
 
 <details>
