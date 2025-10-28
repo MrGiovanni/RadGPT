@@ -25,7 +25,7 @@ AbdomenAtlas 3.0 is the first public dataset with high quality abdominal CTs and
 
 Moreover, we present RadGPT, a segmentation-based report generation model which significantly surpasses the current state of the art in report generation for abdominal CTs.
 
-Our “superhuman” reports are more accurate, detailed, standardized, and generated faster than traditional human-made reports. **Email zzhou82@jh.edu to get early access to this dataset.**
+Our “superhuman” reports are more accurate, detailed, standardized, and generated faster than traditional human-made reports.
 
 
 ## Paper
