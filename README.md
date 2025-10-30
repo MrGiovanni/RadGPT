@@ -98,12 +98,14 @@ LLM (labeler) extracts binary labels indicating if reports indicate the presence
 ## Citation
 
 ```
-@article{bassi2025radgpt,
-  title={RadGPT: Constructing 3D Image-Text Tumor Datasets},
-  author={Bassi, Pedro RAS and Yavuz, Mehmet Can and Wang, Kang and Chen, Xiaoxi and Li, Wenxuan and Decherchi, Sergio and Cavalli, Andrea and Yang, Yang and Yuille, Alan and Zhou, Zongwei},
-  journal={arXiv preprint arXiv:2501.04678},
-  year={2025},
-  url={https://github.com/MrGiovanni/RadGPT}
+@InProceedings{bassi2025radgpt,
+    author    = {Bassi, Pedro R.A.S. and Yavuz, Mehmet Can and Hamamci, Ibrahim Ethem and Er, Sezgin and Chen, Xiaoxi and Li, Wenxuan and Menze, Bjoern and Decherchi, Sergio and Cavalli, Andrea and Wang, Kang and Yang, Yang and Yuille, Alan and Zhou, Zongwei},
+    title     = {RadGPT: Constructing 3D Image-Text Tumor Datasets},
+    booktitle = {Proceedings of the IEEE/CVF International Conference on Computer Vision (ICCV)},
+    month     = {October},
+    year      = {2025},
+    pages     = {23720-23730},
+    url={https://github.com/MrGiovanni/PanTS}
 }
 ```
 
