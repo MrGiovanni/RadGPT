@@ -41,7 +41,7 @@ ICCV, 2025 <br/>
 You can directly download AbdomenAtlas 3.0 from [HuggingFace](https://huggingface.co/datasets/AbdomenAtlas/AbdomenAtlas3.0Mini/) using your preferred HuggingFace dowload method (e.g., huggingface-cli), *or you can just use the simple download code below*:
 
 ```bash
-git clone https://github.com/PedroRASB/RadGPT
+git clone https://github.com/MrGiovanni/RadGPT.git
 cd RadGPT
 bash download_atlas_3.sh
 ```
