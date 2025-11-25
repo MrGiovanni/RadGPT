@@ -1204,6 +1204,9 @@ def load_pancreatic(folder_path,dataset='AA'):
         if not os.path.exists(vessel):
             vessel=os.path.join('/mnt/ccvl15/psalvad2/AtlasVessels/', folder_path[folder_path.rfind('BDMAP_'):folder_path.rfind('BDMAP_')+len('BDMAP_00000010')].replace('_',''),'segmentations',
                                 type2name[vessel_type])
+		if ((not os.path.exists(vessel)) and (type2name[vessel_type]=='celiac_aa.nii.gz')):
+			vessel = os.path.join(folder_path, 'celiac_trunk.nii.gz')
+			
         vessel = cr.load_canonical(vessel)
         if vessel_type=='aorta':
             #save as nifti for debugging
