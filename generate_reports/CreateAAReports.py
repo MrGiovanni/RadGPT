@@ -1261,7 +1261,7 @@ def write_lesion_report(tumor,ct,organ,organ_hu,item,spacing,resize_factor,erode
 
             text+=f'Largest one {local_largest} measures {np.round(sizes[1]["longest_diameter"]/10,1)} x {np.round(sizes[1]["perpendicular_diameter"]/10,1)} cm.'
             if staged:
-                text+=f'\nClinical stage: {sizes[get_largest_stage_key(sizes)]['stage']}NxMx.\n'
+                text+=f"\nClinical stage: {sizes[get_largest_stage_key(sizes)]['stage']}NxMx.\n"
                 ad=sizes[get_largest_stage_key(sizes)]['resectability']
                 if ad!='.':
                     text=text+'Surgical resectability: '+ad+'\n'
@@ -1282,7 +1282,7 @@ def write_lesion_report(tumor,ct,organ,organ_hu,item,spacing,resize_factor,erode
             else:
                 text+=f'A large {typ_L} {clss} {local_largest} mass ({np.round(sizes[1]["longest_diameter"]/10,1)} x {np.round(sizes[1]["perpendicular_diameter"]/10,1)} cm). '
             if staged:
-                text+=f'\nClinical stage: {sizes[get_largest_stage_key(sizes)]['stage']}NxMx.\n'
+                text+=f"\nClinical stage: {sizes[get_largest_stage_key(sizes)]['stage']}NxMx.\n"
                 ad=sizes[get_largest_stage_key(sizes)]['resectability']
                 if ad!='.':
                     text=text+f'Surgical resectability: '+ad+'\n'
@@ -1314,7 +1314,7 @@ def write_lesion_report(tumor,ct,organ,organ_hu,item,spacing,resize_factor,erode
                     text+=f'Multiple ({len(sizes)}) {typ_S} {clss} masses. Largest one {local_largest} measures {np.round(sizes[1]["longest_diameter"]/10,1)} x {np.round(sizes[1]["perpendicular_diameter"]/10,1)} cm. '
             
             if staged:
-                text+=f'\nClinical stage: {sizes[get_largest_stage_key(sizes)]['stage']}NxMx.\n'
+                text+=f"\nClinical stage: {sizes[get_largest_stage_key(sizes)]['stage']}NxMx.\n"
                 ad=sizes[get_largest_stage_key(sizes)]['resectability']
                 if ad!='.':
                     text=text+f'Surgical resectability: '+ad+'\n'
