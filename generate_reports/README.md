@@ -2,10 +2,19 @@
 
 ### Perform tumor and organ segmentation
 
-You may create reports from manually made segmentation masks, or from AI made masks. You will need both organ masks (liver, kidney, pancreas, spleen) and tumor masks (liver, kidney, pancreas). Our manually made tumor masks will be released soon. You can create AI-made masks with the code below:
+You may create reports from pre-saved segmentation masks. You will need both organ masks (liver, kidney, pancreas, spleen) and tumor masks (liver, kidney, pancreas). For AbdomenAtlas 3.0, you can just download our masks. To create reports for your own dataset, you can use the AI model below to generate masks.
+
+- AbdomenAtlas 3.0 dataset:
+
+```
+git clone https://github.com/MrGiovanni/RadGPT.git
+cd RadGPT
+bash download_atlas_3.sh
+```
 
 - Tumor masks: see https://huggingface.co/qicq1c/DiffTumor
-- Organ masks: see [organ_masks/README.md](organ_masks/README.md)
+- Organ sub-segments: see [organ_masks/README.md](organ_masks/README.md)
+- Organ sub-segments and blood vessels (necessary for staging): see [https://huggingface.co/AbdomenAtlas/RSuperMaskPretrained](https://huggingface.co/AbdomenAtlas/RSuperMaskPretrained)
 
 ### Dataset Format
 
