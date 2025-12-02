@@ -42,9 +42,9 @@ Our code also accepts data in the AbdomenAtlas format, shown below.
 
 ```
 /path/to/dataset/
-├── BDMAP_A0000001
+├── BDMAP_00000001
 |    └── ct.nii.gz
-├── BDMAP_A0000002
+├── BDMAP_00000002
 |    └── ct.nii.gz
 ...
 ```
@@ -74,6 +74,8 @@ Arguments:
 - --BDMAP_format: add this argument if your dataset is in the alternative format (AbdomenAtlas format)
 - --gpus: list of gpus you want to use. Set to 0 for a single GPU computer. For 4 gpus, set --gpus 0,1,2,3
 
+> [!NOTE]
+> --pth points to the dataset root. This is the folder that contains folders called BDMAP_... inside it. See "Alternative format: AbdomenAtlas" above. In that example, you would use --pth /path/to/dataset/, not --pth /path/to/dataset/BDMAP_00000001.
 
 <details>
   <summary>Other dataset formats</summary>
