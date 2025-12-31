@@ -16,9 +16,8 @@ bash download_atlas_3.sh
     
 To create reports, you will need both organ masks (liver, kidney, pancreas, spleen) and tumor masks (liver, kidney, pancreas). To create reports for your own dataset, you can use the AI models below:
 
-- Tumor masks: see https://huggingface.co/qicq1c/DiffTumor
-- Organ sub-segments: see [organ_masks/README.md](organ_masks/README.md)
-- Organ sub-segments and blood vessels (necessary for staging): see [https://huggingface.co/AbdomenAtlas/RSuperMaskPretrained](https://huggingface.co/AbdomenAtlas/RSuperMaskPretrained)
+- Tumor segmentation model: https://huggingface.co/qicq1c/DiffTumor
+- Organ segmentation model: [https://huggingface.co/AbdomenAtlas/RSuperMaskPretrained](https://huggingface.co/AbdomenAtlas/RSuperMaskPretrained)
   
 </div>
 </details>
