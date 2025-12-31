@@ -2,9 +2,7 @@
 
 ### Perform tumor and organ segmentation
 
-You may create reports from pre-saved segmentation masks. You will need both organ masks (liver, kidney, pancreas, spleen) and tumor masks (liver, kidney, pancreas). For AbdomenAtlas 3.0, you can just download our masks. To create reports for your own dataset, you can use the AI model below to generate masks.
-
-- AbdomenAtlas 3.0 dataset:
+We create reports from pre-saved segmentation masks. For AbdomenAtlas 3.0, you do not need to perform segmentation, you can just can just download our masks:
 
 ```
 git clone https://github.com/MrGiovanni/RadGPT.git
@@ -12,13 +10,22 @@ cd RadGPT
 bash download_atlas_3.sh
 ```
 
+<details>
+<summary style="margin-left: 25px;">Segment organs and tumors in your own dataset.</summary>
+<div style="margin-left: 25px;">
+    
+To create reports, you will need both organ masks (liver, kidney, pancreas, spleen) and tumor masks (liver, kidney, pancreas). To create reports for your own dataset, you can use the AI models below:
+
 - Tumor masks: see https://huggingface.co/qicq1c/DiffTumor
 - Organ sub-segments: see [organ_masks/README.md](organ_masks/README.md)
 - Organ sub-segments and blood vessels (necessary for staging): see [https://huggingface.co/AbdomenAtlas/RSuperMaskPretrained](https://huggingface.co/AbdomenAtlas/RSuperMaskPretrained)
+  
+</div>
+</details>
 
 ### Dataset Format
 
-Assemble the dataset in this format:
+After generating masks, rename and organize your dataset in the format below. AbdomenAtlas 3.0 is already in this format, so you do not need to re-organize it.
 
 <details>
 <summary style="margin-left: 25px;">Dataset format.</summary>
@@ -26,12 +33,12 @@ Assemble the dataset in this format:
 
 ```
 /path/to/dataset/
-├── BDMAP_A0000001
+├── BDMAP_00000001
 |    ├── ct.nii.gz
 │    └── segmentations
-│          ├── liver_tumor.nii.gz
-│          ├── kidney_tumor.nii.gz
-│          ├── pancreas_tumor.nii.gz
+│          ├── liver_lesion.nii.gz
+│          ├── kidney_lesion.nii.gz
+│          ├── pancreatic_lesion.nii.gz
 │          ├── aorta.nii.gz
 │          ├── gall_bladder.nii.gz
 │          ├── kidney_left.nii.gz
@@ -39,12 +46,12 @@ Assemble the dataset in this format:
 │          ├── liver.nii.gz
 │          ├── pancreas.nii.gz
 │          └──...
-├── BDMAP_A0000002
+├── BDMAP_00000002
 |    ├── ct.nii.gz
 │    └── segmentations
-│          ├── liver_tumor.nii.gz
-│          ├── kidney_tumor.nii.gz
-│          ├── pancreas_tumor.nii.gz
+│          ├── liver_lesion.nii.gz
+│          ├── kidney_lesion.nii.gz
+│          ├── pancreatic_lesion.nii.gz
 │          ├── aorta.nii.gz
 │          ├── gall_bladder.nii.gz
 │          ├── kidney_left.nii.gz
@@ -57,7 +64,7 @@ Assemble the dataset in this format:
 </div>
 </details>
 
-Place the folder AbdomenAtlas inside this folder (RadGPTReportGeneration). You may use your own dataset, just rename and organize it as above.
+Place the folder AbdomenAtlas inside this folder (RadGPTReportGeneration). 
 
 ## Generate structured reports from segmentation
 RadGPT uses deterministic algorithms to extract information from CTs and segmentation masks (tumor size, attenuation, location, interaction with blood vessels and organs, organ size, steatosis,...), and create structured radiology reports.
