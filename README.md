@@ -23,7 +23,11 @@
 
 AbdomenAtlas 3.0 is the first public dataset with high quality abdominal CTs and paired radiology reports. The database includes more than 9,000 CT scans with radiology reports and per-voxel annotations of liver, kidney and pancreatic tumors.
 
-Overall, AbdomenAtlas 3.0 presents per-voxel segmentation masks for **tumors in the kidney, pancreas, and liver**, masks for several **blood vessels**, including the aorta, IVC, SMA, CHA, CA, SA, portal vein, and splenic vein, **liver sub-segments**, **pancreas sub-segments**, and **9 organs**, including the liver, kidney, pancreas, spleen, adrenal glands, stomach, duodenum, bile duct, intestines.
+Overall, AbdomenAtlas 3.0 presents per-voxel segmentation masks for:
+- **tumors in the kidney, pancreas, and liver**
+- **blood vessels**, including the aorta, IVC, SMA, CHA, CA, SA, portal vein, and splenic vein
+- **liver sub-segments** & **pancreas sub-segments**
+- **9 organs**, including the liver, kidney, pancreas, spleen, adrenal glands, stomach, duodenum, bile duct, intestines
 
 Moreover, we present RadGPT, a segmentation-based report generation model which significantly surpasses the current state of the art in report generation for abdominal CTs.
 
