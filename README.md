@@ -92,6 +92,9 @@ pip install -r requirements.txt
 mkdir HFCache
 ```
 
+## AbdomenAtlasNet: Trained Organ and Tumor Segmentation Models
+
+You can download AbdomenAtlasNet, an organ and tumor segmentation model trained on AbdomenAtlas 3.0, here: [HuggingFace](https://huggingface.co/AbdomenAtlas/AbdomenAtlasNet/)
 
 ## Generate Structured, Narrative and Enhanced Human Reports
 
