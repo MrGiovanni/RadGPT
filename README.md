@@ -22,7 +22,7 @@
 
 
 > [!NOTE]
-> We have publicly released **AbdomenAtlasNet** ([download here](https://huggingface.co/AbdomenAtlas/AbdomenAtlasNet/)): organ and tumor segmentation models trained on AbdomenAtlas 3.0!
+> We have publicly released **AtlasNet** ([download here](https://huggingface.co/AbdomenAtlas/AtlasNet/)): organ and tumor segmentation models trained on AbdomenAtlas 3.0!
 
 
 AbdomenAtlas 3.0 is the first public dataset with high quality abdominal CTs and paired radiology reports. The database includes more than 9,000 CT scans with radiology reports and per-voxel annotations of liver, kidney and pancreatic tumors.
