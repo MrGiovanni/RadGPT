@@ -1,0 +1,72 @@
+cff-version: 1.2.0
+message: "If you use RadGPT, please cite the ICCV 2025 paper below."
+title: "RadGPT: constructing 3D image-text tumor datasets from radiology reports"
+abstract: "Official implementation of RadGPT, an LLM-based pipeline that converts radiology reports into structured 3D image-text tumor datasets for CT."
+type: software
+repository-code: "https://github.com/MrGiovanni/RadGPT"
+url: "https://github.com/MrGiovanni/RadGPT"
+license: CC-BY-NC-ND-4.0
+keywords:
+  - "radiology-reports"
+  - "large-language-model"
+  - "image-text"
+  - "tumor"
+  - "ct"
+  - "dataset"
+  - "medical-imaging"
+authors:
+  - family-names: "Bassi"
+    given-names: "Pedro R. A. S."
+  - family-names: "Yavuz"
+    given-names: "Mehmet Can"
+  - family-names: "Wang"
+    given-names: "Kang"
+  - family-names: "Chen"
+    given-names: "Xiaoxi"
+  - family-names: "Li"
+    given-names: "Wenxuan"
+  - family-names: "Decherchi"
+    given-names: "Sergio"
+  - family-names: "Cavalli"
+    given-names: "Andrea"
+  - family-names: "Yang"
+    given-names: "Yang"
+  - family-names: "Yuille"
+    given-names: "Alan"
+  - family-names: "Zhou"
+    given-names: "Zongwei"
+    orcid: "https://orcid.org/0000-0002-3154-9851"
+preferred-citation:
+  type: conference-paper
+  title: "RadGPT: Constructing 3D Image-Text Tumor Datasets"
+  authors:
+    - family-names: "Bassi"
+      given-names: "Pedro R. A. S."
+    - family-names: "Yavuz"
+      given-names: "Mehmet Can"
+    - family-names: "Wang"
+      given-names: "Kang"
+    - family-names: "Chen"
+      given-names: "Xiaoxi"
+    - family-names: "Li"
+      given-names: "Wenxuan"
+    - family-names: "Decherchi"
+      given-names: "Sergio"
+    - family-names: "Cavalli"
+      given-names: "Andrea"
+    - family-names: "Yang"
+      given-names: "Yang"
+    - family-names: "Yuille"
+      given-names: "Alan"
+    - family-names: "Zhou"
+      given-names: "Zongwei"
+      orcid: "https://orcid.org/0000-0002-3154-9851"
+  collection-title: "IEEE/CVF International Conference on Computer Vision (ICCV)"
+  start: 23720
+  end: 23730
+  year: 2025
+  doi: "10.1109/ICCV51701.2025.02202"
+identifiers:
+  - type: other
+    value: "arXiv:2501.04678"
+    description: "Preprint version"

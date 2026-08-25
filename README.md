@@ -16,6 +16,7 @@
 ![logo](document/fig_teaser.png)
 </div>
 
+<<<<<<< Updated upstream
 > [!NOTE]
 > **We have publicly released our dataset!**  
 > Please check the download instructions below.
@@ -26,6 +27,9 @@
 
 
 AbdomenAtlas 3.0 is the first public dataset with high quality abdominal CTs and paired radiology reports. The database includes more than 9,000 CT scans with radiology reports and per-voxel annotations of liver, kidney and pancreatic tumors.
+=======
+AbdomenAtlas 3.0 is the first public, high-quality abdominal CT dataset with detailed, expert-reviewed radiology reports. The database includes more than 9,000 CT scans with radiology reports and per-voxel annotations of liver, kidney and pancreatic tumors.
+>>>>>>> Stashed changes
 
 Overall, AbdomenAtlas 3.0 presents per-voxel segmentation masks for:
 - **tumors in the kidney, pancreas, and liver**
@@ -113,11 +117,19 @@ LLM (labeler) extracts binary labels indicating if reports indicate the presence
 
 ```
 @inproceedings{bassi2025radgpt,
+<<<<<<< Updated upstream
   title={Radgpt: Constructing 3d image-text tumor datasets},
   author={Bassi, Pedro RAS and Yavuz, Mehmet Can and Hamamci, Ibrahim Ethem and Er, Sezgin and Chen, Xiaoxi and Li, Wenxuan and Menze, Bjoern and Decherchi, Sergio and Cavalli, Andrea and Wang, Kang and others},
   booktitle={Proceedings of the IEEE/CVF International Conference on Computer Vision},
   pages={23720--23730},
   year={2025}，
+=======
+  title={RadGPT: Constructing 3D Image-Text Tumor Datasets},
+  author={Bassi, Pedro RAS and Yavuz, Mehmet Can and Wang, Kang and Chen, Xiaoxi and Li, Wenxuan and Decherchi, Sergio and Cavalli, Andrea and Yang, Yang and Yuille, Alan and Zhou, Zongwei},
+  booktitle={Proceedings of the IEEE/CVF International Conference on Computer Vision},
+  pages={23720--23730},
+  year={2025},
+>>>>>>> Stashed changes
   url={https://github.com/MrGiovanni/RadGPT}
 }
 ```
