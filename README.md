@@ -119,8 +119,7 @@ LLM (labeler) extracts binary labels indicating if reports indicate the presence
   author={Bassi, Pedro RAS and Yavuz, Mehmet Can and Hamamci, Ibrahim Ethem and Er, Sezgin and Chen, Xiaoxi and Li, Wenxuan and Menze, Bjoern and Decherchi, Sergio and Cavalli, Andrea and Wang, Kang and others},
   booktitle={Proceedings of the IEEE/CVF International Conference on Computer Vision},
   pages={23720--23730},
-  year={2025}，
-
+  year={2025},
   title={RadGPT: Constructing 3D Image-Text Tumor Datasets},
   author={Bassi, Pedro RAS and Yavuz, Mehmet Can and Wang, Kang and Chen, Xiaoxi and Li, Wenxuan and Decherchi, Sergio and Cavalli, Andrea and Yang, Yang and Yuille, Alan and Zhou, Zongwei},
   booktitle={Proceedings of the IEEE/CVF International Conference on Computer Vision},
