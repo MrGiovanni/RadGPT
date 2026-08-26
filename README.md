@@ -16,7 +16,6 @@
 ![logo](document/fig_teaser.png)
 </div>
 
-<<<<<<< Updated upstream
 > [!NOTE]
 > **We have publicly released our dataset!**  
 > Please check the download instructions below.
