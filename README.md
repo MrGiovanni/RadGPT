@@ -28,7 +28,6 @@
 AbdomenAtlas 3.0 is the first public dataset with high quality abdominal CTs and paired radiology reports. The database includes more than 9,000 CT scans with radiology reports and per-voxel annotations of liver, kidney and pancreatic tumors.
 =======
 AbdomenAtlas 3.0 is the first public, high-quality abdominal CT dataset with detailed, expert-reviewed radiology reports. The database includes more than 9,000 CT scans with radiology reports and per-voxel annotations of liver, kidney and pancreatic tumors.
->>>>>>> Stashed changes
 
 Overall, AbdomenAtlas 3.0 presents per-voxel segmentation masks for:
 - **tumors in the kidney, pancreas, and liver**
@@ -128,7 +127,6 @@ LLM (labeler) extracts binary labels indicating if reports indicate the presence
   booktitle={Proceedings of the IEEE/CVF International Conference on Computer Vision},
   pages={23720--23730},
   year={2025},
->>>>>>> Stashed changes
   url={https://github.com/MrGiovanni/RadGPT}
 }
 ```
